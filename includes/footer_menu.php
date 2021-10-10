@@ -13,7 +13,7 @@
 
 <div class="modal fade" id="myModal">
     <form role="form" method="post" enctype="multipart/form-data">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content my-modal-content">
 
 
@@ -22,7 +22,7 @@
     </form><!-- /.form -->
 </div><!-- /.modal -->
 <div class="modal fade" id="myLargeModal">
-    <div class="modal-dialog modal-lg" style="min-width: 90%">
+    <div class="modal-dialog modal-xl" style="min-width: 90%">
         <div class="modal-content my-large-modal-content">
 
 

@@ -50,7 +50,7 @@ if (!isset($_GET['modal'])) {
                 $page_title = "Search";
             include 'templates/pages/' . $page . '.php';
             break;
-        case 'ajax_data':
+        case 'ajax':
             if (file_exists('templates/pages/' . $page . '.php'))
                 include 'templates/pages/' . $page . '.php';
             break;
@@ -67,7 +67,7 @@ if (!isset($_GET['modal'])) {
                 $page_title = "Users Role";
             include 'templates/pages/users/' . $page . '.php';
             break;
-        case 'view_users':
+        case 'users':
             if (file_exists('templates/pages/users/' . $page . '.php'))
                 $page_title = "Users";
             include 'templates/pages/users/' . $page . '.php';

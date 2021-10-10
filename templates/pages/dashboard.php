@@ -18,7 +18,7 @@
             <?php require_once 'includes/footer_menu.php'; ?>
         </div>
     </div>
-    <?php require_once'includes/footer.php';?>
+    <?php require_once 'includes/footer.php'; ?>
 
 </body>
 

@@ -76,6 +76,39 @@ if (isset($_POST['action'])) {
                 }
             }
             break;
+
+        case 'addUser':
+            $email = Input::get("email");
+            $username = Input::get("username");
+            $queryDup = "SELECT * FROM user WHERE (username='$username' OR email='$email') AND status=1";
+            if (DB::getInstance()->checkRows($queryDup)) {
+                $message = 'User already exists';
+                $status = 'danger';
+            } else {
+                $user_id = DB::getInstance()->insert("user", array(
+                    'fname' => $data['fname'],
+                    'lname' => $data['lname'],
+                    'username' => $data['username'],
+                    'email' => $data['email'],
+                    'password' => sha1($data['password']),
+                    'category' => $data['role'] ? $data['role'] : NULL,
+                    'department_id' => $data['department_id'] ? $data['department_id'] : NULL,
+                    'gender' => $data['gender'],
+                    'designation' => $data['designation'],
+                    'address' => $data['address'],
+                    'phone' => $data['phone'],
+                    'nin' => $data['nin'],
+                    'is_verified' => 1
+                ));
+                if ($user_id) {
+                    $message = 'User registered successfully';
+                    $status = 'success';
+                } else {
+                    $message = 'Error while registering new user';
+                    $status = 'danger';
+                }
+            }
+            break;
         case 'editUserProfile':
             $data = $_POST;
             $array = array(
@@ -121,24 +154,19 @@ if (isset($_POST['action'])) {
             $array = array(
                 'fname' => $data['fname'],
                 'lname' => $data['lname'],
-                'role_id' => $data['role_id'] ? $data['role_id'] : NULL,
-                'client_id' => ($data['client_id']) ? $data['client_id'] : NULL,
+                'category' => $data['role'] ? $data['role'] : NULL,
                 'department_id' => $data['department_id'] ? $data['department_id'] : NULL,
-                'grade_id' => $data['grade_id'] ? $data['grade_id'] : NULL,
-                'date_started' => $data['date_started'],
-                'theme' => $data['theme'],
-                'sidebar' => $data['sidebar'],
-                'layout' => $data['layout'],
-                'designation' => $data['designation'],
                 'gender' => $data['gender'],
-                'employee_number' => $data['employee_number'],
-                'appointment_type' => $data['appointment_type'],
-                'is_approved' => 1
+                'designation' => $data['designation'],
+                'address' => $data['address'],
+                'phone' => $data['phone'],
+                'nin' => $data['nin'],
+                // 'is_approved' => 1
             );
             if ($data['password'] != '') {
                 $array['password'] = sha1($data['password']);
             }
-            DB::getInstance()->update('user', $data['id'], $array, 'user_id');
+            DB::getInstance()->update('user', $data['id'], $array, 'id');
 
             $message = 'User updated successfully';
             $status = 'success';
@@ -209,51 +237,28 @@ if (isset($_POST['action'])) {
             $status = "success";
             break;
         case 'addRequisition':
-            $unique_number = date("Ymdhis");
-            if ($data['direct_approver']) {
-                $id = DB::getInstance()->insert('requisition', [
-                    'date_submitted' => ($data['date_submitted']) ? $data['date_submitted'] : $date_today,
-                    'unique_number' => $unique_number,
-                    'department_id' => ($data['department_id']) ? $data['department_id'] : NULL,
-                    'user_id' => $user_id,
-                    'direct_approver' => ($data['direct_approver']) ? $data['direct_approver'] : NULL,
-                    'project_id' => ($data['project_id']) ? $data['project_id'] : NULL,
-                    'submitted_by' => $user_id,
-                    'requester_signature' => $data['requester_signature'],
-                    'reference_number' => $data['reference_number'],
-                    'requisition_number' => $data['requisition_number'],
-                    'category' => $data['category'] ? $data['category'] : 'requisition',
-                    'amount_requested' => ($data['amount_requested']) ? $data['amount_requested'] : 0
-                ]);
-                if ($id) {
-                    foreach ($data['name'] as $i => $name) {
-                        if ($name) {
-                            DB::getInstance()->insert('requisition_items', [
-                                'name' => $name,
-                                'quantity_requested' => ($data['quantity'][$i]) ? $data['quantity'][$i] : 0,
-                                'unit_measure' => $data['unit_measure'][$i],
-                                'unit_price' => ($data['unit_cost'][$i]) ? $data['unit_cost'][$i] : 0,
-                                'requisition_id' => $id,
-                                'payee' => $data['payee'][$i],
-                            ]);
-                        }
+            $id = DB::getInstance()->insert('requisition', [
+                'date' => ($data['date']) ? $data['date'] : $date_today,
+                'department_id' => ($data['department_id']) ? $data['department_id'] : NULL,
+                'user_id' => $user_id,
+                'requisition_number' => $data['requisition_number'],
+                'amount_requested' => ($data['amount_requested']) ? $data['amount_requested'] : 0
+            ]);
+            if ($id) {
+                foreach ($data['item'] as $i => $item) {
+                    if ($item) {
+                        DB::getInstance()->insert('requisition_item', [
+                            'item_id' => $item,
+                            'quantity' => ($data['quantity'][$i]) ? $data['quantity'][$i] : 0,
+                            // 'unit_measure' => $data['unit_measure'][$i],
+                            'unit_price' => ($data['unit_cost'][$i]) ? $data['unit_cost'][$i] : 0,
+                            'requisition_id' => $id,
+                        ]);
                     }
                 }
-                if ($data['direct_approver']) {
-                    $approver = DB::getInstance()->getRow("user", $data['direct_approver'], "*", "user_id");
-                    $template = DB::getInstance()->getRow("notificationtemplate", "requisition_approval_request", "subject,message", "code");
-                    $search = array('{names}', '{requisition_number}', '{requisition_status}', '{comment}', '{company}');
-                    $body_replace = array($approver->fname . ' ' . $approver->lname, $request->requisition_number, $request->requisition_status, $data['comment'], $COMPANY_NAME);
-                    $message = str_replace($search, $body_replace, $template->message);
-    
-                    sendEmail($approver->user_email, $approver->fname . ' ' . $approver->lname, $template->subject, $message);
-                }
-                $status = 'success';
-                $message = 'Requisition uploaded';
-            } else {
-                $status = 'danger';
-                $message = 'Requisition not uploaded, no approver selected';
             }
+            $status = 'success';
+            $message = 'Requisition uploaded';
             break;
         case 'approveRequisition':
             $request = DB::getInstance()->getRow("requisition", $data['id'], "*", "id");

@@ -18,14 +18,13 @@
                         <a class="nav-link" href="#">Affiliate</a>
                     </nav>
                 </div>
-                <a class="nav-link" href="#">
-                    <div class="nav-link-icon"><i data-feather="bar-chart"></i></div>
-                    Charts
+                <a class="nav-link" href="?page=<?php echo $crypt->encode("users")?>">
+                    <div class="nav-link-icon"><i class="fa fa-users"></i></div>
+                    Users
                 </a>
-                <!-- Sidenav Link (Tables)-->
-                <a class="nav-link" href="#">
-                    <div class="nav-link-icon"><i data-feather="filter"></i></div>
-                    Tables
+                <a class="nav-link" href="?page=<?php echo $crypt->encode("requisition")?>">
+                    <div class="nav-link-icon"><i class="fa fa-bars"></i></div>
+                    Requisitions
                 </a>
             </div>
         </div>
