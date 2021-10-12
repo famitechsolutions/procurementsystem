@@ -1,31 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <meta name="description" content="" />
-    <meta name="author" content="" />
-    <title>Login - SB Admin Pro</title>
-    <link href="assets/css/styles.css" rel="stylesheet" />
-    <link rel="icon" type="image/x-icon" href="assets/img/favicon.png" />
-</head>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title><?php echo $title ?> Login</title>
+        <link rel="stylesheet" href="assets/libs/mdi/css/materialdesignicons.min.css">
+        <link rel="stylesheet" href="assets/libs/css/vendor.bundle.base.css">
+        <link rel="stylesheet" href="assets/css/style-latest.css">
+        <link rel="shortcut icon" href="<?php echo $logo_small; ?>" /> 
+    </head>
 
-<body class="bg-primary">
-    <div id="layoutAuthentication">
-        <div id="layoutAuthentication_content">
-            <main>
-                <div class="container-xl px-4">
-                    <div class="row justify-content-center">
-                        <div class="col-lg-5">
-                            <!-- Basic login form-->
-                            <div class="card shadow-lg border-0 rounded-lg mt-5">
-                                <div class="card-header justify-content-center">
-                                    <h3 class="fw-light my-4">Login</h3>
+    <body>
+        <div class="container-scroller">
+            <div class="container-fluid page-body-wrapper full-page-wrapper">
+                <div class="content-wrapper d-flex align-items-center auth px-0">
+                    <div class="row w-100 mx-0">
+                        <div class="col-lg-4 mx-auto">
+                            <div class="auth-form-light text-left py-5 px-4 px-sm-5">
+                                <div class="brand-logo">
+                                    <img src="<?php echo $logo ?>" style="width:100%" alt="">
                                 </div>
-                                <div class="card-body">
-                                    <?php
+                                <?php
                                     //Role::registerPermissions();
                                     // Role::registerUserPermissions();
                                     $reset_password_url = $SYSTEM_URL . "index.php?page=" . $crypt->encode("reset_password");
@@ -89,34 +85,37 @@
                                         }
                                     }
                                     ?>
-                                    <!-- Login form-->
-                                    <form method="POST">
-                                        <!-- Form Group (email address)-->
-                                        <div class="mb-3">
-                                            <input class="form-control" name="username" type="email" placeholder="Email address" required />
-                                        </div>
-                                        <!-- Form Group (password)-->
-                                        <div class="mb-3">
-                                            <input class="form-control" name="password" type="password" placeholder="Password" required />
-                                        </div>
-                                        <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
-                                            <a class="small" href="#">Forgot Password?</a>
-                                            <button class="btn btn-primary" name="login_button" value="login_button">Login</button>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div class="card-footer text-center">
-                                    <div class="small"><a href="#">Need an account? Sign up!</a></div>
-                                </div>
+                                <h4 class="font-weight-light text-center">Sign in to continue.</h4>
+                                <form class="pt-3" action="" method="POST">
+                                    <div class="form-group">
+                                        <input type="email" class="form-control form-control-lg" placeholder="Email" name="username" autofocus required>
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="password" class="form-control form-control-lg" name="password" placeholder="Password" required>
+                                    </div>
+                                    <div class="mt-3">
+                                        <button class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn" name="login_button" value="login_button" type="submit">SIGN IN</button>
+                                    </div>
+                                    <div class="my-2 d-flex justify-content-between align-items-center">
+                                        <div class="form-check"></div>
+                                        <a href="#" class="auth-link text-black">Forgot password?</a>
+                                    </div>
+                                </form>
                             </div>
                         </div>
                     </div>
                 </div>
-            </main>
+                <!-- content-wrapper ends -->
+            </div>
+            <!-- page-body-wrapper ends -->
         </div>
-    </div>
-    <script src="assets/js/scripts.js"></script>
-
-</body>
+        <!-- container-scroller -->
+        <script src="assets/libs/js/vendor.bundle.base.js"></script>
+        <script src="assets/js/off-canvas.js"></script>
+        <script src="assets/js/hoverable-collapse.js"></script>
+        <script src="assets/js/template.js"></script>
+        <script src="assets/js/settings.js"></script>
+        <script src="assets/js/todolist.js"></script>
+    </body>
 
 </html>

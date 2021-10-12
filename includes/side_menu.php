@@ -1,32 +1,38 @@
-<div id="layoutSidenav_nav">
-    <nav class="sidenav shadow-right sidenav-light">
-        <div class="sidenav-menu">
-            <div class="nav accordion" id="accordionSidenav">
-                <!-- Sidenav Accordion (Dashboard)-->
-                <a class="nav-link collapsed" href="javascript:void(0);" data-bs-toggle="collapse" data-bs-target="#collapseDashboards" aria-expanded="false" aria-controls="collapseDashboards">
-                    <div class="nav-link-icon"><i data-feather="activity"></i></div>
-                    Dashboards
-                    <div class="sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
-                </a>
-                <div class="collapse" id="collapseDashboards" data-bs-parent="#accordionSidenav">
-                    <nav class="sidenav-menu-nested nav accordion" id="accordionSidenavPages">
-                        <a class="nav-link" href="?page=<?php echo $crypt->encode('dashboard')?>">
-                            Default
-                            <span class="badge bg-primary-soft text-primary ms-auto">Updated</span>
-                        </a>
-                        <a class="nav-link" href="#">Multipurpose</a>
-                        <a class="nav-link" href="#">Affiliate</a>
-                    </nav>
-                </div>
-                <a class="nav-link" href="?page=<?php echo $crypt->encode("users")?>">
-                    <div class="nav-link-icon"><i class="fa fa-users"></i></div>
-                    Users
-                </a>
-                <a class="nav-link" href="?page=<?php echo $crypt->encode("requisition")?>">
-                    <div class="nav-link-icon"><i class="fa fa-bars"></i></div>
-                    Requisitions
-                </a>
+<?php
+$_SESSION["PREVIOUS_URL"] = $_SERVER["REQUEST_URI"];
+$user_role = $_SESSION['system_user_role'];
+$user_id = $_SESSION['system_user_id'];
+?>
+<nav class="sidebar sidebar-offcanvas" id="sidebar">
+    <ul class="nav">
+        <li class="nav-item <?php echo ($page == 'dashboard') ? 'active' : '' ?>">
+            <a class="nav-link" href="index.php?page=<?php echo $crypt->encode('dashboard') ?>">
+                <i class="fa fa-home menu-icon"></i> <span class="menu-title">Dashboard</span>
+            </a>
+        </li>
+        <li class="nav-item <?php echo ($page == 'users') ? 'active' : '' ?>">
+            <a class="nav-link" href="index.php?page=<?php echo $crypt->encode('users') ?>">
+                <i class="fa fa-users menu-icon"></i> <span class="menu-title">Users</span>
+            </a>
+        </li>
+        <li class="nav-item <?php echo ($page == 'requisition') ? 'active' : '' ?>">
+            <a class="nav-link" href="index.php?page=<?php echo $crypt->encode('requisition') ?>">
+                <i class="fa fa-bars menu-icon"></i> <span class="menu-title">Requistions</span>
+            </a>
+        </li>
+        <li class="nav-item <?php echo ($page_in_asset_attributes) ? 'active' : '' ?>">
+            <a class="nav-link <?php echo ($page_in_asset_attributes) ? '' : 'collapsed' ?>" aria-expanded="<?php echo ($page_in_settings) ? 'true' : 'false' ?>" data-toggle="collapse" href="#ui-asset-attributes">
+                <i class="fa fa-wrench menu-icon"></i><span class="menu-title">Asset Attributes</span> <i class="menu-arrow"></i> </a>
+            <div class="collapse <?php echo ($page_in_asset_attributes) ? 'show' : '' ?>" id="ui-asset-attributes">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item"><a class="nav-link" href="index.php?page=<?php echo $crypt->encode('asset_categories') ?>">Asset Categories</a> </li>
+                    <li class="nav-item"><a class="nav-link" href="index.php?page=<?php echo $crypt->encode('license_categories') ?>">License Categories</a> </li>
+                    <li class="nav-item"><a class="nav-link" href="index.php?page=<?php echo $crypt->encode('asset_status_labels') ?>">Status Labels</a> </li>
+                    <li class="nav-item"><a class="nav-link" href="index.php?page=<?php echo $crypt->encode('manufacturers') ?>">Manufacturers</a> </li>
+                    <li class="nav-item"><a class="nav-link" href="index.php?page=<?php echo $crypt->encode('view_suppliers') ?>">Suppliers</a> </li>
+                </ul>
             </div>
-        </div>
-    </nav>
-</div>
+        </li>
+        <li class="nav-item"><a class="nav-link" href="index.php?page=<?php echo $crypt->encode('logout') ?>"><i class="fa fa-power-off menu-icon"></i><span class="menu-title"> Logout</span></a></li>
+    </ul>
+</nav>

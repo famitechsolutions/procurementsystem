@@ -51,10 +51,6 @@ if (isset($_POST['action'])) {
             DB::getInstance()->updateSetting("email_smtp_security", $_POST['email_smtp_security']);
             DB::getInstance()->updateSetting("email_smtp_auth", isset($_POST['email_smtp_auth']) ? 'true' : 'false');
             DB::getInstance()->updateSetting("email_smtp_enable", isset($_POST['email_smtp_enable']) ? 'true' : 'false');
-            //DB::getInstance()->updateSetting("email_smtp_domain", $_POST['email_smtp_domain']);
-            //DB::getInstance()->updateSetting("imap_encryption", $_POST['imap_encryption']);
-            //DB::getInstance()->updateSetting("imap_server_address", $_POST['imap_server_address']);
-
             $settings = Input::get("settings");
             foreach ($settings as $setting => $value) {
                 DB::getInstance()->updateSetting("$setting", $value);
@@ -65,15 +61,8 @@ if (isset($_POST['action'])) {
             break;
         case 'addDepartment':
             $department_name = Input::get("department_name");
-            if (!DB::getInstance()->checkRows("SELECT department_id FROM department WHERE department_name='$department_name' AND status=1")) {
-                DB::getInstance()->insert('department', array('department_name' => $department_name));
-                $dept_id = DB::getInstance()->getName("department", $department_name, "department_id", "department_name");
-                $folder_id = DB::getInstance()->insert("folder", array("folder_name" => $department_name, "department_id" => $dept_id));
-                DB::getInstance()->update("folder", $folder_id, array("folder_url" => $folder_id . "/"), "folder_id");
-                if (!file_exists("uploads/folders/" . $folder_id)) {
-                    @mkdir("uploads/folders/" . $folder_id);
-                    @chmod("uploads/folders/" . $folder_id, 0777);
-                }
+            if (!DB::getInstance()->checkRows("SELECT id FROM department WHERE name='$department_name' AND status=1")) {
+                $dept_id=DB::getInstance()->insert('department', array('name' => $department_name));
             }
             break;
 
