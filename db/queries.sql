@@ -12,3 +12,5 @@ CREATE TABLE `logs` (
 
 ALTER TABLE `requisition` CHANGE `approval_status` `requisition_status` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'Pending';
 ALTER TABLE `requisition` ADD `amount_requested` DOUBLE NOT NULL DEFAULT '0' AFTER `approval_time`;
+
+ALTER TABLE `user` ADD `is_verified` INT NOT NULL DEFAULT '0' AFTER `department_id`;
