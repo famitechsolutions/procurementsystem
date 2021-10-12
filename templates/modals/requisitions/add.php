@@ -9,7 +9,7 @@ foreach($itemsList AS $item){
 
 <div class="modal-header">
     <h4 class="modal-title">Department Requisition</h4>
-    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 </div>
 <form action="" method="POST">
     <div class="modal-body">
@@ -79,7 +79,7 @@ foreach($itemsList AS $item){
         <input type="hidden" name="reroute" value="<?php echo $_GET['reroute']; ?>">
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn btn-warning" data-bs-dismiss="modal"><i class="fa fa-times"></i> <?php _e('Cancel'); ?></button>
+        <button type="button" class="btn btn-warning" data-dismiss="modal"><i class="fa fa-times"></i> <?php _e('Cancel'); ?></button>
         <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> <?php _e('Save'); ?></button>
     </div>
 </form>

@@ -1,143 +1,80 @@
-<nav class="topnav navbar navbar-expand shadow justify-content-between justify-content-sm-start navbar-light bg-white" id="sidenavAccordion">
-    <!-- Sidenav Toggle Button-->
-    <button class="btn btn-icon btn-transparent-dark order-1 order-lg-0 me-2 ms-lg-2 me-lg-0" id="sidebarToggle"><i data-feather="menu"></i></button>
-    <!-- Navbar Brand-->
-    <!-- * * Tip * * You can use text or an image for your navbar brand.-->
-    <!-- * * * * * * When using an image, we recommend the SVG format.-->
-    <!-- * * * * * * Dimensions: Maximum height: 32px, maximum width: 240px-->
-    <a class="navbar-brand pe-3 ps-4 ps-lg-2">SB Admin Pro</a>
-    <!-- Navbar Search Input-->
-    <!-- * * Note: * * Visible only on and above the lg breakpoint-->
-    <form class="form-inline me-auto d-none d-lg-block me-3">
-        <div class="input-group input-group-joined input-group-solid">
-            <input class="form-control pe-0" type="search" placeholder="Search" aria-label="Search" />
-            <div class="input-group-text"><i data-feather="search"></i></div>
-        </div>
-    </form>
-    <!-- Navbar Items-->
-    <ul class="navbar-nav align-items-center ms-auto">
-        <!-- Navbar Search Dropdown-->
-        <!-- * * Note: * * Visible only below the lg breakpoint-->
-        <li class="nav-item dropdown no-caret me-3 d-lg-none">
-            <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="searchDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="search"></i></a>
-            <!-- Dropdown - Search-->
-            <div class="dropdown-menu dropdown-menu-end p-3 shadow animated--fade-in-up" aria-labelledby="searchDropdown">
-                <form class="form-inline me-auto w-100">
-                    <div class="input-group input-group-joined input-group-solid">
-                        <input class="form-control pe-0" type="text" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2" />
-                        <div class="input-group-text"><i data-feather="search"></i></div>
-                    </div>
+<nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row navbar-info">
+    <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
+        <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+            <span class="mdi mdi-menu"></span>
+        </button>
+        <a class="navbar-brand brand-logo"><img src="<?php echo $logo; ?>" alt="" /></a>
+        <a class="navbar-brand brand-logo-mini"><img src="<?php echo $logo_small; ?>" alt="" /></a>
+    </div>
+    <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
+
+        <ul class="navbar-nav mr-lg-2">
+                <form action="" method="">
+                    <li class="nav-item nav-search d-none d-lg-block">
+                        <div class="input-group">
+                            <input name="page" value="<?php echo $crypt->encode("search") ?>" type="hidden">
+                            <input type="text" class="form-control" placeholder="search" required name="s" aria-label="search" aria-describedby="search">
+                            <div class="input-group-append">
+                                <button class="input-group-text" id="search">
+                                    <i class="mdi mdi-magnify"></i>
+                                </button>
+                            </div>
+
+                        </div>
+                    </li>
                 </form>
-            </div>
-        </li>
-        <!-- Alerts Dropdown-->
-        <li class="nav-item dropdown no-caret d-none d-sm-block me-3 dropdown-notifications">
-            <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownAlerts" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="bell"></i></a>
-            <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownAlerts">
-                <h6 class="dropdown-header dropdown-notifications-header">
-                    <i class="me-2" data-feather="bell"></i>
-                    Alerts Center
-                </h6>
-                <!-- Example Alert 1-->
-                <a class="dropdown-item dropdown-notifications-item" href="#!">
-                    <div class="dropdown-notifications-item-icon bg-warning"><i data-feather="activity"></i></div>
-                    <div class="dropdown-notifications-item-content">
-                        <div class="dropdown-notifications-item-content-details">December 29, 2021</div>
-                        <div class="dropdown-notifications-item-content-text">This is an alert message. It's nothing serious, but it requires your attention.</div>
+            </ul>
+        <ul class="navbar-nav navbar-nav-right">
+            <?php if (in_array("manageSettings", $user_permissions) || in_array("viewLogs", $user_permissions) || in_array("addUserRole", $user_permissions) || in_array("uploadKPI", $user_permissions)) {
+                $page_in_settings = ($page == 'site_settings' || $page == 'system_logs' || $page == 'user_roles') ? TRUE : FALSE;
+            ?>
+                <li class="nav-item d-flex dropdown mr-1 ml-1">
+                    <a class="nav-link count-indicator dropdown-toggle d-flex justify-content-center align-items-center" href="#" title="System" data-toggle="dropdown">
+                        <i class="mdi mdi-settings"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right navbar-dropdown">
+                        <?php if (in_array("manageSettings", $user_permissions)) { ?>
+                            <a class="dropdown-item" href="index.php?page=<?php echo $crypt->encode('site_settings') ?>"><i class="fa fa-gear"></i> System Settings</a>
+                        <?php
+                        }
+                        if (in_array("viewLogs", $user_permissions)) {
+                        ?>
+                            <a class="dropdown-item" href="index.php?page=<?php echo $crypt->encode('system_logs') ?>"><i class="fa fa-history"></i> System Logs</a>
+                        <?php }
+                        ?>
                     </div>
+                </li>
+            <?php } ?>
+            <li class="nav-item d-flex dropdown mr-1 ml-1">
+                <a class="nav-link count-indicator dropdown-toggle d-flex justify-content-center align-items-center" id="messageDropdown" href="#" data-toggle="dropdown">
+                    <i class="mdi mdi-plus-circle mx-0"></i>
                 </a>
-                <!-- Example Alert 2-->
-                <a class="dropdown-item dropdown-notifications-item" href="#!">
-                    <div class="dropdown-notifications-item-icon bg-info"><i data-feather="bar-chart"></i></div>
-                    <div class="dropdown-notifications-item-content">
-                        <div class="dropdown-notifications-item-content-details">December 22, 2021</div>
-                        <div class="dropdown-notifications-item-content-text">A new monthly report is ready. Click here to view!</div>
-                    </div>
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="messageDropdown">
+                    <?php if (in_array("addUser", $user_permissions)) { ?>
+                        <a onclick="showModal('index.php?modal=users/edit_user&reroute=<?php echo $crypt->encode('page=' . $_GET['page']) ?>');return false" data-toggle="modal" class="dropdown-item">New User</a>
+                        <a onclick="showModal('index.php?modal=onboarding/employee_reporting&reroute=<?php echo $crypt->encode('page=' . $_GET['page']) ?>');return false" data-toggle="modal" class="dropdown-item">Employee Reporting</a>
+                    <?php
+                    }
+                    if (in_array("addProject", $user_permissions)) { ?><button onclick="showModal('index.php?modal=projects/add&reroute=<?php echo $crypt->encode('page=' . $_GET['page']) ?>');return false" class="dropdown-item">New Project</button><?php }
+                    if (in_array("addRequisition", $user_permissions)) { ?><button onclick="showModal('index.php?modal=requisitions/add&reroute=<?php echo $crypt->encode('page=' . $_GET['page']) ?>', 'large');return false" class="dropdown-item">New Requisition</button><?php }
+                    if (in_array("addRequisition", $user_permissions)) { ?><button onclick="showModal('index.php?modal=requisitions/add_claim_form&reroute=<?php echo $crypt->encode('page=' . $_GET['page']) ?>', 'large');return false" class="dropdown-item">New Claim Form</button><?php }
+                    
+                    ?>
+                </div>
+            </li>
+            <li class="nav-item d-flex nav-profile dropdown ml-1">
+                <a class="nav-link" data-toggle="dropdown" id="profileDropdown">
+                    <img src="<?php echo $_SESSION['user_profile_picture'] ?>" alt="" />
                 </a>
-                <!-- Example Alert 3-->
-                <a class="dropdown-item dropdown-notifications-item" href="#!">
-                    <div class="dropdown-notifications-item-icon bg-danger"><i class="fas fa-exclamation-triangle"></i></div>
-                    <div class="dropdown-notifications-item-content">
-                        <div class="dropdown-notifications-item-content-details">December 8, 2021</div>
-                        <div class="dropdown-notifications-item-content-text">Critical system failure, systems shutting down.</div>
-                    </div>
-                </a>
-                <!-- Example Alert 4-->
-                <a class="dropdown-item dropdown-notifications-item" href="#!">
-                    <div class="dropdown-notifications-item-icon bg-success"><i data-feather="user-plus"></i></div>
-                    <div class="dropdown-notifications-item-content">
-                        <div class="dropdown-notifications-item-content-details">December 2, 2021</div>
-                        <div class="dropdown-notifications-item-content-text">New user request. Woody has requested access to the organization.</div>
-                    </div>
-                </a>
-                <a class="dropdown-item dropdown-notifications-footer" href="#!">View All Alerts</a>
-            </div>
-        </li>
-        <!-- Messages Dropdown-->
-        <li class="nav-item dropdown no-caret d-none d-sm-block me-3 dropdown-notifications">
-            <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownMessages" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i data-feather="mail"></i></a>
-            <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownMessages">
-                <h6 class="dropdown-header dropdown-notifications-header">
-                    <i class="me-2" data-feather="mail"></i>
-                    Message Center
-                </h6>
-                <!-- Example Message 1  -->
-                <a class="dropdown-item dropdown-notifications-item" href="#!">
-                    <img class="dropdown-notifications-item-img" src="assets/img/illustrations/profiles/profile-2.png" />
-                    <div class="dropdown-notifications-item-content">
-                        <div class="dropdown-notifications-item-content-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
-                        <div class="dropdown-notifications-item-content-details">Thomas Wilcox · 58m</div>
-                    </div>
-                </a>
-                <!-- Example Message 2-->
-                <a class="dropdown-item dropdown-notifications-item" href="#!">
-                    <img class="dropdown-notifications-item-img" src="assets/img/illustrations/profiles/profile-3.png" />
-                    <div class="dropdown-notifications-item-content">
-                        <div class="dropdown-notifications-item-content-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
-                        <div class="dropdown-notifications-item-content-details">Emily Fowler · 2d</div>
-                    </div>
-                </a>
-                <!-- Example Message 3-->
-                <a class="dropdown-item dropdown-notifications-item" href="#!">
-                    <img class="dropdown-notifications-item-img" src="assets/img/illustrations/profiles/profile-4.png" />
-                    <div class="dropdown-notifications-item-content">
-                        <div class="dropdown-notifications-item-content-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
-                        <div class="dropdown-notifications-item-content-details">Marshall Rosencrantz · 3d</div>
-                    </div>
-                </a>
-                <!-- Example Message 4-->
-                <a class="dropdown-item dropdown-notifications-item" href="#!">
-                    <img class="dropdown-notifications-item-img" src="assets/img/illustrations/profiles/profile-5.png" />
-                    <div class="dropdown-notifications-item-content">
-                        <div class="dropdown-notifications-item-content-text">Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</div>
-                        <div class="dropdown-notifications-item-content-details">Colby Newton · 3d</div>
-                    </div>
-                </a>
-                <!-- Footer Link-->
-                <a class="dropdown-item dropdown-notifications-footer" href="#!">Read All Messages</a>
-            </div>
-        </li>
-        <!-- User Dropdown-->
-        <li class="nav-item dropdown no-caret dropdown-user me-3 me-lg-4">
-            <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img class="img-fluid" src="assets/img/illustrations/profiles/profile-1.png" /></a>
-            <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
-                <h6 class="dropdown-header d-flex align-items-center">
-                    <img class="dropdown-user-img" src="assets/img/illustrations/profiles/profile-1.png" />
-                    <div class="dropdown-user-details">
-                        <div class="dropdown-user-details-name">Valerie Luna</div>
-                        <div class="dropdown-user-details-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="13657f667d7253727c7f3d707c7e">[email&#160;protected]</a></div>
-                    </div>
-                </h6>
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="#!">
-                    <div class="dropdown-item-icon"><i data-feather="settings"></i></div>
-                    Account
-                </a>
-                <a class="dropdown-item" href="?page=<?php echo $crypt->encode("logout") ?>">
-                    <div class="dropdown-item-icon"><i data-feather="log-out"></i></div>
-                    Logout
-                </a>
-            </div>
-        </li>
-    </ul>
+                <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
+                    <a href="index.php?page=<?php echo $crypt->encode("user_profile") ?>" class="dropdown-item"><i class="mdi mdi-account-outline text-primary"></i> My Profile</a>
+                    <a class="dropdown-item" href="index.php?page=<?php echo $crypt->encode("logout") ?>"><i class="fa fa-power-off text-danger"></i> Logout</a>
+                </div>
+            </li>
+        </ul>
+        <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button" data-toggle="offcanvas">
+            <span class="mdi mdi-menu"></span>
+        </button>
+    </div>
+
 </nav>

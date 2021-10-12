@@ -6,7 +6,7 @@ $departmentsList = DB::getInstance()->querySample("SELECT * FROM department WHER
 <div class="modal-header">
 
     <h4 class="modal-title">User Account</h4>
-    <button class="btn-close" type="button" data-bs-dismiss="modal" aria-label="Close"></button>
+    <button class="btn-close" type="button" data-dismiss="modal" aria-label="Close"></button>
 </div>
 <div class="modal-body">
     <div class="row">
@@ -99,6 +99,6 @@ $departmentsList = DB::getInstance()->querySample("SELECT * FROM department WHER
     <input type="hidden" name="reroute" value="<?php echo $_GET['reroute']; ?>">
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-white" data-bs-dismiss="modal" data-dismiss="modal">Close</button>
+    <button type="button" class="btn btn-white" data-dismiss="modal" data-dismiss="modal">Close</button>
     <button type="submit" class="btn btn-primary">Submit</button>
 </div>
