@@ -15,9 +15,6 @@
             <?php
             require_once 'includes/side_menu.php';
             $id = $crypt->decode($_GET['id']);
-            $request = DB::getInstance()->querySample("SELECT r.*,d.department_name,prj.name project, CONCAT(fname,' ',lname) user,(SELECT CONCAT(fname,' ',lname) name FROM user WHERE user_id=r.submitted_by LIMIT 1) prepared_by,(SELECT CONCAT(fname,' ',lname) name FROM user WHERE user_id=r.direct_approver LIMIT 1) direct_approver_name,(SELECT CONCAT(fname,' ',lname) name FROM user WHERE user_id=r.financial_approver_id LIMIT 1) financial_approver_name,(CASE WHEN r.requisition_status!='Requested' THEN (SELECT CONCAT(fname,' ',lname) name FROM user WHERE user_id=r.approved_by LIMIT 1) ELSE '' END) final_approver_name FROM requisition r LEFT JOIN projects prj ON (prj.id=r.project_id AND prj.status=1),department d,user u WHERE r.user_id=u.user_id AND r.department_id=d.department_id AND r.id='$id'")[0];
-            $itemsList = DB::getInstance()->querySample("SELECT * FROM requisition_items WHERE requisition_id='$id' AND status=1");
-            $files = DB::getInstance()->querySample("SELECT * FROM file WHERE requisition_id='$id' AND status=1");
             ?>
             <!-- partial -->
             <div class="main-panel">
@@ -25,11 +22,16 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="card">
-                                <?php if ($request) {
-                                    $lpo_enabled = $request->category == 'requisition' ? TRUE : FALSE;
+                                <?php
+                                $request = DB::getInstance()->querySample("SELECT r.*,d.name department_name, CONCAT(fname,' ',lname) prepared_by,(SELECT CONCAT(fname,' ',lname) name FROM user WHERE id=r.approval_by LIMIT 1) approver FROM requisition r,department d,user u WHERE r.user_id=u.id AND r.department_id=d.id AND r.id='$id'")[0];
+                                $itemsList = DB::getInstance()->querySample("SELECT * FROM requisition_item ri,item i WHERE i.id=ri.item_id AND ri.requisition_id='$id' AND ri.status=1");
+                                $files = DB::getInstance()->querySample("SELECT * FROM attachment WHERE requisition_id='$id' AND status=1");
+                                
+                                if ($request) {
+                                    $lpo_enabled = TRUE;
                                 ?>
                                     <div class="card-title">
-                                        Departmental <?php echo $request->category ?> #<?php echo $request->requisition_number; ?> - <small>[<?php echo english_date($request->date_submitted); ?>]</small>
+                                        Departmental requisition #<?php echo $request->requisition_number; ?> - <small>[<?php echo english_date($request->date_submitted); ?>]</small>
                                         <a class="btn btn-default btn-xs">Status: <?php echo $request->requisition_status ?></a>
                                     </div>
                                     <div class="nav-tabs-custom">
@@ -45,15 +47,15 @@
                                             <li class="nav-item"><a class="nav-link <?php echo $files_tab_active ?>" href="#files-tab" data-toggle="tab"><?php _e('Files'); ?></a></li>
 
                                             <div class="btn-group- pull-right" style="padding:6px;">
-                                                <?php if (($request->requisition_status == 'Requested' && $request->direct_approver == $user_id) || ($request->requisition_status == 'Directly Approved' && $request->financial_approver_id == $user_id) || ($request->requisition_status == 'Financially Approved' && $request->final_approver == $user_id)) { ?>
-                                                    <a data-toggle='tooltip' title='<?php _e('Approve '.$request->category); ?>' class="btn btn-primary btn-sm " onClick='showModal("index.php?modal=requisitions/approve&reroute=<?php echo $crypt->encode('page=' . $_GET['page'] . '&id=' . $_GET['id'] . '&tab=general-tab') . '&id=' . $request->id; ?>&tab=general-tab", "large");return false'>Approve</a>
-                                                    <a data-toggle='tooltip' title='<?php _e('Reject '.$request->category); ?>' class="btn btn-danger btn-sm " onClick='showModal("index.php?modal=requisitions/reject&reroute=<?php echo $crypt->encode('page=' . $_GET['page'] . '&id=' . $_GET['id'] . '&tab=general-tab') . '&id=' . $request->id; ?>&tab=general-tab");return false'>Reject</a>
+                                                <?php if (in_array("approveRequisition",$user_permissions)&&$request->requisition_status=='Pending') { ?>
+                                                    <a data-toggle='tooltip' title='<?php _e('Approve '.$request->category); ?>' class="btn btn-primary btn-xs " onClick='showModal("index.php?modal=requisitions/approve&reroute=<?php echo $crypt->encode('page=' . $_GET['page'] . '&id=' . $_GET['id'] . '&tab=general-tab') . '&id=' . $request->id; ?>&tab=general-tab");return false'>Approve</a>
+                                                    <a data-toggle='tooltip' title='<?php _e('Reject '.$request->category); ?>' class="btn btn-danger btn-xs " onClick='showModal("index.php?modal=requisitions/reject&reroute=<?php echo $crypt->encode('page=' . $_GET['page'] . '&id=' . $_GET['id'] . '&tab=general-tab') . '&id=' . $request->id; ?>&tab=general-tab");return false'>Reject</a>
                                                 <?php } ?>
-                                                <?php if (in_array("editRequisition", $user_permissions) && in_array($request->requisition_status, $REQUISITION_EDITABLE_STATUS_LIST)) { ?><a data-toggle='tooltip' title='<?php _e('Edit '.$request->category); ?>' class="btn btn-default btn-sm " href="#" onClick='showModal("index.php?modal=requisitions/edit&reroute=<?php echo $crypt->encode('page=' . $_GET['page'] . '&id=' . $_GET['id'] . '&tab=general-tab') . '&id=' . $request->id; ?>&tab=general-tab", "large");return false'>Edit</a><?php } ?>
-                                                <?php if (in_array("addLPO", $user_permissions) && $request->requisition_status == 'Approved' && $lpo_enabled) { ?><a data-toggle='tooltip' title='<?php _e('Add LPO'); ?>' class="btn btn-primary btn-sm " href="#" onClick='showModal("index.php?modal=requisitions/add_lpo&reroute=<?php echo $crypt->encode('page=' . $_GET['page'] . '&id=' . $_GET['id'] . '&tab=lpos-tab') . '&id=' . $request->id; ?>&tab=lpos-tab", "large");return false'>Add LPO</a><?php } ?>
-                                                <a data-toggle='tooltip' onclick="PrintSection('requisitionSection', '21.0', '29.7')" title='<?php _e('Print '.$request->category); ?>' class="btn btn-default btn-sm " href="#">Print</a>
-                                                <a data-toggle='tooltip' title='<?php _e('Upload File'); ?>' class="btn btn-default btn-sm" onClick='showModal("index.php?modal=files/upload&reroute=<?php echo $crypt->encode('page=' . $_GET['page'] . '&id=' . $_GET['id'] . '&tab=files-tab') . '&id=' . $request->id . '&requisition_id=' . $request->id . '&project_id=' . $request->project_id . '&client_id=' . $request->client_id; ?>&tab=files-tab");return false'>Upload File</a>
-                                                <?php if (in_array("deleteRequisition", $user_permissions) && $request->requisition_status == 'Requested') { ?><a data-toggle='tooltip' title='<?php _e('Delete '.$request->category); ?>' class="btn btn-danger btn-sm " href="#" onClick='showModal("index.php?modal=requisitions/delete<?php echo '&reroute=' . $crypt->encode('page=' . $crypt->encode('requisition')) . '&id=' . $request->id; ?>");return false'><i class="fa fa-trash"></i></a><?php } ?>
+                                                <?php if (in_array("editRequisition", $user_permissions) && ($request->requisition_status=='Pending'||$request->requisition_status=='Rejected')) { ?><a data-toggle='tooltip' title='<?php _e('Edit '.$request->category); ?>' class="btn btn-default btn-xs " href="#" onClick='showModal("index.php?modal=requisitions/edit&reroute=<?php echo $crypt->encode('page=' . $_GET['page'] . '&id=' . $_GET['id'] . '&tab=general-tab') . '&id=' . $request->id; ?>&tab=general-tab", "large");return false'>Edit</a><?php } ?>
+                                                <?php if (in_array("addLPO", $user_permissions) && $request->requisition_status == 'Approved' && $lpo_enabled) { ?><a data-toggle='tooltip' title='<?php _e('Add LPO'); ?>' class="btn btn-primary btn-xs " href="#" onClick='showModal("index.php?modal=requisitions/add_lpo&reroute=<?php echo $crypt->encode('page=' . $_GET['page'] . '&id=' . $_GET['id'] . '&tab=lpos-tab') . '&id=' . $request->id; ?>&tab=lpos-tab", "large");return false'>Add LPO</a><?php } ?>
+                                                <a data-toggle='tooltip' onclick="PrintSection('requisitionSection', '21.0', '29.7')" title='<?php _e('Print '.$request->category); ?>' class="btn btn-default btn-xs " href="#">Print</a>
+                                                <a data-toggle='tooltip' title='<?php _e('Upload File'); ?>' class="btn btn-default btn-xs" onClick='showModal("index.php?modal=files/upload&reroute=<?php echo $crypt->encode('page=' . $_GET['page'] . '&id=' . $_GET['id'] . '&tab=files-tab') . '&id=' . $request->id . '&requisition_id=' . $request->id ?>&tab=files-tab");return false'>Upload File</a>
+                                                <?php if (in_array("deleteRequisition", $user_permissions) && $request->requisition_status == 'Requested') { ?><a data-toggle='tooltip' title='<?php _e('Delete '.$request->category); ?>' class="btn btn-danger btn-xs " href="#" onClick='showModal("index.php?modal=requisitions/delete<?php echo '&reroute=' . $crypt->encode('page=' . $crypt->encode('requisition')) . '&id=' . $request->id; ?>");return false'><i class="fa fa-trash"></i></a><?php } ?>
                                             </div>
 
 
@@ -67,14 +69,13 @@
                                                     </h2>
                                                     <?php echo COMPANY_LOCATION ?><br>
                                                     <?php echo $SITE_DESCRIPTION ?><br /><br />
-                                                    <h2><u><?php echo $request->category=='requisition'?'Department Requisition Form':'Staff Expenses Claim Form'?></u></h2>
+                                                    <h2><u>Department Requisition Form</u></h2>
                                                     <table class="" style="width: 100%;">
                                                         <tr>
                                                             <td>Dept: <strong><?php echo $request->department_name ?></strong></td>
-                                                            <td>Project/Funder: <strong><?php echo $request->project ?></strong></td>
                                                             <td>Ref No: <strong><?php echo $request->reference_number ?></strong></td>
-                                                            <td>User: <strong><?php echo $request->user ?></strong></td>
-                                                            <td><?php echo $request->category?> number: <strong><?php echo $request->requisition_number ?></strong></td>
+                                                            <td>User: <strong><?php echo $request->prepared_by ?></strong></td>
+                                                            <td>Requisition number: <strong><?php echo $request->requisition_number ?></strong></td>
                                                         </tr>
                                                     </table>
                                                     <hr />
@@ -87,35 +88,32 @@
                                                                 <th>Unit of Measure</th>
                                                                 <th>Unit Price</th>
                                                                 <th>Total Price</th>
-                                                                <th>Payee</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
                                                             <?php
                                                             foreach ($itemsList as $i => $item) {
-                                                                $item->quantity_requested = ($request->requisition_status != 'Approved') ? $item->quantity_requested : $item->quantity_approved
-                                                            ?>
+                                                             ?>
                                                                 <tr>
                                                                     <td><?php echo ($i + 1) ?></td>
                                                                     <td><?php echo $item->name ?></td>
-                                                                    <td><?php echo $item->quantity_requested ?></td>
+                                                                    <td><?php echo $item->quantity ?></td>
                                                                     <td><?php echo $item->unit_measure ?></td>
                                                                     <td><?php echo $item->unit_price ?></td>
-                                                                    <td><?php echo $item->quantity_requested * $item->unit_price ?></td>
-                                                                    <td><?php echo $item->payee ?></td>
+                                                                    <td><?php echo $item->quantity * $item->unit_price ?></td>
                                                                 </tr>
                                                             <?php } ?>
                                                         </tbody>
                                                         <tfoot>
                                                             <tr>
-                                                                <th colspan="5"></th>
-                                                                <th><?php echo ($request->requisition_status != 'Approved') ? $request->amount_requested : $request->amount_approved ?></th>
+                                                                <th colspan="4"></th>
+                                                                <th><?php echo $request->amount_requested ?></th>
                                                                 <th></th>
                                                             </tr>
                                                         </tfoot>
                                                     </table>
                                                     <p><strong>Amount in words:</strong>
-                                                        <?php $amount = $request->requisition_status != 'Approved' ? $request->amount_requested : $request->amount_approved;
+                                                        <?php $amount = $request->amount_requested;
                                                         $amount = $amount ? $amount : 0;
                                                         echo NumberToWord::getInstance()->toText($amount) . ' Ugandan Shillings only';
                                                         ?></p>
@@ -123,35 +121,18 @@
                                                         <tr>
                                                             <td colspan="2">Signatories</td>
                                                             <td>Date</td>
-                                                            <td>Signature</td>
                                                             <td>Comment</td>
                                                         </tr>
                                                         <tr>
-                                                            <td><?php echo $request->category=='requisition'?'Prepared By':'Claimant'?></td>
+                                                            <td>Prepared By</td>
                                                             <td><?php echo $request->prepared_by ?></td>
                                                             <td><?php echo english_date($request->date_submitted); ?></td>
-                                                            <td><?php echo $request->requester_signature ?></td>
                                                             <td></td>
                                                         </tr>
                                                         <tr>
-                                                            <td><?php echo $request->category=='requisition'?'Direct Approver':'Authorized By'?></td>
-                                                            <td><?php echo $request->direct_approver_name ?></td>
-                                                            <td><?php echo ($request->time_directly_approved) ? english_date($request->time_time_directly_approved) : '' ?></td>
-                                                            <td><?php echo $request->direct_approver_signature ?></td>
-                                                            <td><?php echo $request->direct_approver_comment ?></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Financial Approver</td>
-                                                            <td><?php echo $request->financial_approver_name ?></td>
-                                                            <td><?php echo ($request->financial_approver_time) ? english_date($request->financial_approver_time) : '' ?></td>
-                                                            <td><?php echo $request->financial_approver_signature ?></td>
-                                                            <td><?php echo $request->financial_approver_comment ?></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Final Approver</td>
-                                                            <td><?php echo $request->final_approver_name ?></td>
-                                                            <td><?php echo ($request->time_approved) ? english_date($request->time_approved) : '' ?></td>
-                                                            <td><?php echo $request->final_approver_signature ?></td>
+                                                            <td>Approved By</td>
+                                                            <td><?php echo $request->approver?></td>
+                                                            <td><?php echo ($request->approval_time) ? english_date($request->approval_time) : '' ?></td>
                                                             <td><?php echo $request->approval_comment ?></td>
                                                         </tr>
                                                     </table>
@@ -162,14 +143,14 @@
                                                     <!-- <div class="card-title">LPOs generated</div> -->
                                                     <div class="panel-group accordion accordion-solid-header" id="accordion3" role="tablist">
                                                         <?php
-                                                        $lposList = DB::getInstance()->querySample("SELECT l.*,CONCAT(fname,' ',lname) user FROM lpo l,user u WHERE l.user_id=u.user_id AND l.requisition_id='$id' AND l.status=1");
+                                                        $lposList = DB::getInstance()->querySample("SELECT l.* FROM purchase_order l WHERE l.requisition_id='$id' AND l.status=1");
                                                         if (empty($lposList)) {
                                                             echo '<div class="alert alert-info m-3">No LPOs generated</div>';
                                                         }
                                                         $expanded = count($lposList) == 1 ? true : false;
                                                         foreach ($lposList as $lpo) {
-                                                            $files = DB::getInstance()->querySample("SELECT * FROM file WHERE lpo_id='$lpo->id' AND status=1");
-                                                            $itemsList = DB::getInstance()->querySample("SELECT * FROM requisition_items WHERE lpo_id='$lpo->id' AND status=1");
+                                                            $files = DB::getInstance()->querySample("SELECT * FROM attachment WHERE purchase_order_id='$lpo->id' AND status=1");
+                                                            $itemsList = DB::getInstance()->querySample("SELECT * FROM requisition_item ri,item i WHERE ri.item_id=i.id AND ri.purchase_order_id='$lpo->id' AND status=1");
                                                         ?>
                                                             <!--Start Loop-->
                                                             <div class="card" role="tab" id="lpo-item-<?php echo $lpo->id ?>">
@@ -187,10 +168,10 @@
                                                                             <li class="nav-item"><a class="nav-link" href="#lpo-files-<?php echo $lpo->id ?>-tab" data-toggle="tab"><?php _e('Files'); ?></a></li>
 
                                                                             <div class="btn-group- pull-right" style="padding:6px;">
-                                                                                <?php if (in_array("editLPO", $user_permissions)) { ?><a data-toggle='tooltip' title='<?php _e('Edit LPO'); ?>' class="btn btn-default btn-sm" onClick='showModal("index.php?modal=requisitions/edit_lpo&reroute=<?php echo $crypt->encode('page=' . $_GET['page'] . '&id=' . $_GET['id'] . '&tab=lpos-tab') . '&id=' . $request->id . '&lpo_id=' . $lpo->id; ?>&tab=lpo-tab", "large");return false'>Edit</a><?php } ?>
-                                                                                <?php if ($request->requisition_status == 'Approved') { ?><a data-toggle='tooltip' title='<?php _e('Upload File'); ?>' class="btn btn-default btn-sm" onClick='showModal("index.php?modal=files/upload&reroute=<?php echo $crypt->encode('page=' . $_GET['page'] . '&id=' . $_GET['id'] . '&tab=lpos-tab') . '&id=' . $request->id . '&lpo_id=' . $lpo->id . '&project_id=' . $request->project_id . '&client_id=' . $request->client_id; ?>&tab=lpos-tab");return false'>Upload File</a><?php } ?>
+                                                                                <?php if (in_array("editLPO", $user_permissions)) { ?><a data-toggle='tooltip' title='<?php _e('Edit LPO'); ?>' class="btn btn-default btn-xs" onClick='showModal("index.php?modal=requisitions/edit_lpo&reroute=<?php echo $crypt->encode('page=' . $_GET['page'] . '&id=' . $_GET['id'] . '&tab=lpos-tab') . '&id=' . $request->id . '&lpo_id=' . $lpo->id; ?>&tab=lpo-tab", "large");return false'>Edit</a><?php } ?>
+                                                                                <?php if ($request->requisition_status == 'Approved') { ?><a data-toggle='tooltip' title='<?php _e('Upload File'); ?>' class="btn btn-default btn-xs" onClick='showModal("index.php?modal=files/upload&reroute=<?php echo $crypt->encode('page=' . $_GET['page'] . '&id=' . $_GET['id'] . '&tab=lpos-tab') . '&id=' . $request->id . '&lpo_id=' . $lpo->id . '&project_id=' . $request->project_id . '&client_id=' . $request->client_id; ?>&tab=lpos-tab");return false'>Upload File</a><?php } ?>
                                                                                 <?php if (in_array("deleteLPO", $user_permissions)) { ?><a data-toggle='tooltip' title='<?php _e('Delete LPO'); ?>' class="btn btn-default" onClick='showModal("index.php?modal=requisitions/delete_lpo&reroute=<?php echo $crypt->encode('page=' . $_GET['page'] . '&id=' . $_GET['id'] . '&tab=lpos-tab') . '&id=' . $request->id . '&lpo_id=' . $lpo->id; ?>&tab=lpo-tab");return false'><i class='fa fa-trash text-danger'></i></a><?php } ?>
-                                                                                <a data-toggle='tooltip' onclick="PrintSection('lpoSection<?php echo $lpo->id ?>', '21.0', '29.7')" title='<?php _e('Print LPO'); ?>' class="btn btn-default btn-sm">Print</a>
+                                                                                <a data-toggle='tooltip' onclick="PrintSection('lpoSection<?php echo $lpo->id ?>', '21.0', '29.7')" title='<?php _e('Print LPO'); ?>' class="btn btn-default btn-xs">Print</a>
                                                                             </div>
 
                                                                         </ul>
@@ -302,14 +283,14 @@
                                                                                     <?php foreach ($files as $file) { ?>
                                                                                         <li id="" style="width:28%;margin:10px;padding:12px;">
                                                                                             <div class="row">
-                                                                                                <div class="col-sm-1" style="vertical-align:middle"><i class="fa fa-<?php echo File::icon($file->file_url); ?>"></i></div>
+                                                                                                <div class="col-sm-1" style="vertical-align:middle"><i class="fa fa-<?php echo File::icon($file->url); ?>"></i></div>
                                                                                                 <div class="col-sm-10">
-                                                                                                    <?php echo $file->file_name . "<br><small>" . $file->file_url . "</small>"; ?>
+                                                                                                    <?php echo $file->title . "<br><small>" . $file->url . "</small>"; ?>
                                                                                                 </div>
                                                                                             </div>
                                                                                             <div class="pull-right">
-                                                                                                <a href="uploads/files/<?php echo $file->file_url; ?>" download class='btn-right text-dark'><i class='fa fa-download'></i></a>&nbsp;
-                                                                                                <?php if (in_array("deleteFile", $user_permissions)) { ?><a href="index.php?page=<?php echo $_GET['page'] . '&id=' . $_GET['id'] . '&action=deleteFile&file_id=' . $crypt->encode($file->file_id) ?>" class='btn-right text-danger'><i class='fa fa-trash-o'></i></a><?php } ?>
+                                                                                                <a href="uploads/files/<?php echo $file->url; ?>" download class='btn-right text-dark'><i class='fa fa-download'></i></a>&nbsp;
+                                                                                                <?php if (in_array("deleteFile", $user_permissions)) { ?><a href="index.php?page=<?php echo $_GET['page'] . '&id=' . $_GET['id'] . '&action=deleteFile&file_id=' . $crypt->encode($file->id) ?>" class='btn-right text-danger'><i class='fa fa-trash-o'></i></a><?php } ?>
                                                                                             </div>
                                                                                         </li>
                                                                                     <?php } ?>
@@ -340,14 +321,14 @@
                                                     <?php foreach ($files as $file) { ?>
                                                         <li id="" style="width:28%;margin:10px;padding:12px;">
                                                             <div class="row">
-                                                                <div class="col-sm-1" style="vertical-align:middle"><i class="fa fa-<?php echo File::icon($file->file_url); ?>"></i></div>
+                                                                <div class="col-sm-1" style="vertical-align:middle"><i class="fa fa-<?php echo File::icon($file->url); ?>"></i></div>
                                                                 <div class="col-sm-10">
-                                                                    <?php echo $file->file_name . "<br><small>" . $file->file_url . "</small>"; ?>
+                                                                    <?php echo $file->title . "<br><small>" . $file->url . "</small>"; ?>
                                                                 </div>
                                                             </div>
                                                             <div class="pull-right">
-                                                                <a href="uploads/files/<?php echo $file->file_url; ?>" download class='btn-right text-dark'><i class='fa fa-download'></i></a>&nbsp;
-                                                                <?php if (in_array("deleteFile", $user_permissions)) { ?><a href="index.php?page=<?php echo $_GET['page'] . '&id=' . $_GET['id'] . '&action=deleteFile&file_id=' . $crypt->encode($file->file_id) ?>" class='btn-right text-danger'><i class='fa fa-trash-o'></i></a><?php } ?>
+                                                                <a href="uploads/files/<?php echo $file->url; ?>" download class='btn-right text-dark'><i class='fa fa-download'></i></a>&nbsp;
+                                                                <?php if (in_array("deleteFile", $user_permissions)) { ?><a href="index.php?page=<?php echo $_GET['page'] . '&id=' . $_GET['id'] . '&action=deleteFile&file_id=' . $crypt->encode($file->id) ?>" class='btn-right text-danger'><i class='fa fa-trash-o'></i></a><?php } ?>
                                                             </div>
                                                         </li>
                                                     <?php } ?>

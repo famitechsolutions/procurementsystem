@@ -52,12 +52,10 @@
                 <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list" aria-labelledby="messageDropdown">
                     <?php if (in_array("addUser", $user_permissions)) { ?>
                         <a onclick="showModal('index.php?modal=users/edit_user&reroute=<?php echo $crypt->encode('page=' . $_GET['page']) ?>');return false" data-toggle="modal" class="dropdown-item">New User</a>
-                        <a onclick="showModal('index.php?modal=onboarding/employee_reporting&reroute=<?php echo $crypt->encode('page=' . $_GET['page']) ?>');return false" data-toggle="modal" class="dropdown-item">Employee Reporting</a>
                     <?php
                     }
-                    if (in_array("addProject", $user_permissions)) { ?><button onclick="showModal('index.php?modal=projects/add&reroute=<?php echo $crypt->encode('page=' . $_GET['page']) ?>');return false" class="dropdown-item">New Project</button><?php }
                     if (in_array("addRequisition", $user_permissions)) { ?><button onclick="showModal('index.php?modal=requisitions/add&reroute=<?php echo $crypt->encode('page=' . $_GET['page']) ?>', 'large');return false" class="dropdown-item">New Requisition</button><?php }
-                    if (in_array("addRequisition", $user_permissions)) { ?><button onclick="showModal('index.php?modal=requisitions/add_claim_form&reroute=<?php echo $crypt->encode('page=' . $_GET['page']) ?>', 'large');return false" class="dropdown-item">New Claim Form</button><?php }
+                    if (in_array("addRFP", $user_permissions)) { ?><button onclick="showModal('index.php?modal=requisitions/add_rfp&reroute=<?php echo $crypt->encode('page=' . $_GET['page']) ?>', 'large');return false" class="dropdown-item">Request for proposal</button><?php }
                     
                     ?>
                 </div>

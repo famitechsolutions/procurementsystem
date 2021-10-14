@@ -1,7 +1,7 @@
 <?php
 $id = $_GET['id'];
-$itemsList = DB::getInstance()->querySample("SELECT * FROM requisition_items WHERE requisition_id='$id' AND status=1");
-$request=DB::getInstance()->querySample("SELECT r.*,CONCAT(p.lpo_tag,(COUNT(l.id)+1))next_lpo_number FROM projects p, requisition r LEFT JOIN lpo l ON(l.requisition_id=r.id) WHERE p.id=r.project_id AND p.status=1 AND r.id='$id' GROUP BY p.id")[0];
+$itemsList = DB::getInstance()->querySample("SELECT i.*,ri.* FROM requisition_item ri,item i WHERE ri.item_id=i.id AND ri.requisition_id='$id' AND ri.status=1");
+$request = DB::getInstance()->querySample("SELECT r.* FROM requisition r WHERE r.id='$id'")[0];
 ?>
 
 <div class="modal-header">
@@ -52,11 +52,11 @@ $request=DB::getInstance()->querySample("SELECT r.*,CONCAT(p.lpo_tag,(COUNT(l.id
                 foreach ($itemsList AS $i => $item) {
                     ?>
                     <tr>
-                        <td><label><?php if($item->lpo_id==''){?><input type="checkbox" name="item_id[]" class="lpo-item" data-amount="<?php echo $item->quantity_requested * $item->unit_price ?>" value="<?php echo $item->id?>" onchange="calculateLPOAsmount('.lpo-item','#general_total')"> <?php }echo $item->name ?></label></td>
-                        <td><?php echo $item->quantity_requested ?></td>
+                        <td><label><?php if($item->purchase_order_id==''){?><input type="checkbox" name="item_id[]" class="lpo-item" data-amount="<?php echo $item->quantity * $item->unit_price ?>" value="<?php echo $item->id?>" onchange="calculateLPOAsmount('.lpo-item','#general_total')"> <?php }echo $item->name ?></label></td>
+                        <td><?php echo $item->quantity ?></td>
                         <td><?php echo $item->unit_measure ?></td>
                         <td><?php echo $item->unit_price ?></td>
-                        <td><?php echo $item->quantity_requested * $item->unit_price ?></td>
+                        <td><?php echo $item->quantity * $item->unit_price ?></td>
                     </tr>
                 <?php } ?>
             </tbody>

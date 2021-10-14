@@ -132,6 +132,16 @@ if (!isset($_GET['modal'])) {
                 $page_title = "LPOs";
             include 'templates/pages/requisitions/' . $page . '.php';
             break;
+        case 'rfps':
+            if (file_exists('templates/pages/requisitions/' . $page . '.php'))
+                $page_title = "RFPs";
+            include 'templates/pages/requisitions/' . $page . '.php';
+            break;
+        case 'rfp':
+                if (file_exists('templates/pages/requisitions/' . $page . '.php'))
+                    $page_title = "RFP";
+                include 'templates/pages/requisitions/' . $page . '.php';
+                break;
         case 'manage_requisition':
             if (file_exists('templates/pages/requisitions/' . $page . '.php'))
                 $page_title = "Single";

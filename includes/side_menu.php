@@ -20,6 +20,11 @@ $user_id = $_SESSION['system_user_id'];
                 <i class="fa fa-bars menu-icon"></i> <span class="menu-title">Requistions</span>
             </a>
         </li>
+        <li class="nav-item <?php echo ($page == 'rfps') ? 'active' : '' ?>">
+            <a class="nav-link" href="index.php?page=<?php echo $crypt->encode('rfps') ?>">
+                <i class="fa fa-bars menu-icon"></i> <span class="menu-title">Request for proposals</span>
+            </a>
+        </li>
         <li class="nav-item <?php echo ($page_in_asset_attributes) ? 'active' : '' ?>">
             <a class="nav-link <?php echo ($page_in_asset_attributes) ? '' : 'collapsed' ?>" aria-expanded="<?php echo ($page_in_settings) ? 'true' : 'false' ?>" data-toggle="collapse" href="#ui-asset-attributes">
                 <i class="fa fa-wrench menu-icon"></i><span class="menu-title">Asset Attributes</span> <i class="menu-arrow"></i> </a>

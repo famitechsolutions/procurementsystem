@@ -33,10 +33,6 @@ foreach($itemsList AS $item){
                 <label>Requisition No. </label>
                 <input class="form-control" id="requisition_number" name="requisition_number">
             </div>
-            <div class="col">
-                <label>Attachment </label>
-                <input type="file" name="attachment">
-            </div>
         </div>
 
         <table class="table table-bordered">
@@ -57,9 +53,9 @@ foreach($itemsList AS $item){
                             <?php echo $itemsString?>
                         </select>
                     </td>
-                    <td><input type="number" id="quantity_1" onkeyup="calculateTotal(1);" min="0" step="0.01" class="form-control" name="quantity[]" required></td>
+                    <td><input type="number" id="quantity_1" oninput="calculateTotal(1);" min="0" step="0.01" class="form-control" name="quantity[]" required></td>
                     <td><input type="text" id="standard_1" class="form-control" name="unit_measure[]"></td>
-                    <td><input type="number" id="unit_price_1" onkeyup="calculateTotal(1);" min="0" class="form-control" name="unit_cost[]"></td>
+                    <td><input type="number" id="unit_price_1" oninput="calculateTotal(1);" min="0" class="form-control" name="unit_cost[]"></td>
                     <td><input type="text" id="total_cost_1" class="form-control" name="total_cost[]" readonly></td>
                     <td></td>
                 </tr>

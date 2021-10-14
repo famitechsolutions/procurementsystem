@@ -62,7 +62,7 @@ if (isset($_POST['action'])) {
         case 'addDepartment':
             $department_name = Input::get("department_name");
             if (!DB::getInstance()->checkRows("SELECT id FROM department WHERE name='$department_name' AND status=1")) {
-                $dept_id=DB::getInstance()->insert('department', array('name' => $department_name));
+                $dept_id = DB::getInstance()->insert('department', array('name' => $department_name));
             }
             break;
 
@@ -178,6 +178,7 @@ if (isset($_POST['action'])) {
             $message = 'Supplier(s) uploaded successfully';
             break;
         case 'uploadFile':
+            error_reporting(E_ALL);
             $files = $_FILES;
             $total = count($files['file']['name']);
 
@@ -189,9 +190,6 @@ if (isset($_POST['action'])) {
                 $filename = $nextfileid . "-" . basename($files["file"]["name"][$i]);
 
                 $extension = end(explode(".", $files["file"]["name"][$i]));
-                $key = strtolower($extension);
-                $file_type = (array_key_exists($key, $file_extensions)) ? $file_extensions[$key] : 'code';
-
                 if (empty($data['name'])) {
                     $emptyfilename = true;
                     $data['name'] = $filename;
@@ -201,17 +199,11 @@ if (isset($_POST['action'])) {
 
                 if (!file_exists($targetfile)) {
                     if (move_uploaded_file($files["file"]["tmp_name"][$i], $targetfile)) {
-                        DB::getInstance()->insert("file", [
-                            "client_id" => $data['client_id'] ? $data['client_id'] : NULL,
-                            "project_id" => $data['project_id'] ? $data['project_id'] : NULL,
-                            "asset_id" => $data['asset_id'] ? $data['asset_id'] : NULL,
-                            "ticketreply_id" => $data['ticketreply_id'] ? $data['ticketreply_id'] : NULL,
+                        DB::getInstance()->insert("attachment", [
                             "requisition_id" => $data['requisition_id'] ? $data['requisition_id'] : NULL,
-                            "lpo_id" => $data['lpo_id'] ? $data['lpo_id'] : NULL,
-                            "file_name" => $data['name'],
-                            "file_url" => $filename,
-                            "file_extension" => $extension,
-                            "file_type" => $file_type
+                            "purchase_order_id" => $data['lpo_id'] ? $data['lpo_id'] : NULL,
+                            "title" => $data['name'],
+                            "url" => $filename,
                         ]);
                     }
                 }
@@ -239,7 +231,7 @@ if (isset($_POST['action'])) {
                         DB::getInstance()->insert('requisition_item', [
                             'item_id' => $item,
                             'quantity' => ($data['quantity'][$i]) ? $data['quantity'][$i] : 0,
-                            // 'unit_measure' => $data['unit_measure'][$i],
+                            'unit_measure' => $data['unit_measure'][$i],
                             'unit_price' => ($data['unit_cost'][$i]) ? $data['unit_cost'][$i] : 0,
                             'requisition_id' => $id,
                         ]);
@@ -252,76 +244,46 @@ if (isset($_POST['action'])) {
         case 'approveRequisition':
             $request = DB::getInstance()->getRow("requisition", $data['id'], "*", "id");
             $array = array('requisition_status' => $data['status']);
-            $approver_id = '';
-            if ($request->requisition_status == 'Requested') {
-                $array['amount_directly_approved'] = ($data['amount_approved']) ? $data['amount_approved'] : 0;
-                $array['time_directly_approved'] = $date_today . ' ' . date('H:i:s');
-                $array['financial_approver_id'] = $approver_id = $data['financial_approver'] ? $data['financial_approver'] : NULL;
-                $array['direct_approver_comment'] = $data['comment'];
-                $array['direct_approver_signature'] = $data['signature'];
-            } else if ($request->requisition_status == 'Directly Approved') {
-                $array['financial_approver_amount'] = ($data['amount_approved']) ? $data['amount_approved'] : 0;
-                $array['final_approver'] = $approver_id = $data['final_approver'] ? $data['final_approver'] : NULL;
-                $array['financial_approver_time'] = $date_today . ' ' . date('H:i:s');
-                $array['financial_approver_comment'] = $data['comment'];
-                $array['financial_approver_signature'] = $data['signature'];
-            } else {
-                $array['amount_approved'] = ($data['amount_approved']) ? $data['amount_approved'] : 0;
-                $array['time_approved'] = $date_today . ' ' . date('H:i:s');
-                $array['approved_by'] = $user_id;
-                $array['approval_comment'] = $data['comment'];
-                $array['final_approver_signature'] = $data['signature'];
-            }
 
+            $array['approval_time'] = $date_today . ' ' . date('H:i:s');
+            $array['approval_by'] = $user_id;
+            $array['approval_comment'] = $data['comment'];
+            // $array['final_approver_signature'] = $data['signature'];
 
+            DB::getInstance()->update('requisition', $data['id'], $array, 'id');
+            // if ($approver_id) {
+            //     $approver = DB::getInstance()->getRow("user", $approver_id, "*", "user_id");
+            //     $template = DB::getInstance()->getRow("notificationtemplate", "requisition_approval_request", "subject,message", "code");
+            //     $search = array('{names}', '{requisition_number}', '{requisition_status}', '{comment}', '{company}');
+            //     $body_replace = array($approver->fname . ' ' . $approver->lname, $request->requisition_number, $request->requisition_status, $data['comment'], $COMPANY_NAME);
+            //     $message = str_replace($search, $body_replace, $template->message);
 
-            if ($approver_id || $request->requisition_status == 'Financially Approved') {
-                DB::getInstance()->update('requisition', $data['id'], $array, 'id');
-                foreach ($data['item_id'] as $i => $item_id) {
-                    if ($item_id) {
-                        DB::getInstance()->update('requisition_items', $item_id, [
-                            $request->requisition_status == 'Requested' ? 'quantity_directly_approved' : ($request->requisition_status == 'Directly Approved' ? 'quantity_financially_approved' : 'quantity_approved') => ($data['quantity'][$i]) ? $data['quantity'][$i] : 0,
-                            'unit_price' => ($data['unit_cost'][$i]) ? $data['unit_cost'][$i] : 0
-                        ], 'id');
-                    }
-                }
-                if ($approver_id) {
-                    $approver = DB::getInstance()->getRow("user", $approver_id, "*", "user_id");
-                    $template = DB::getInstance()->getRow("notificationtemplate", "requisition_approval_request", "subject,message", "code");
-                    $search = array('{names}', '{requisition_number}', '{requisition_status}', '{comment}', '{company}');
-                    $body_replace = array($approver->fname . ' ' . $approver->lname, $request->requisition_number, $request->requisition_status, $data['comment'], $COMPANY_NAME);
-                    $message = str_replace($search, $body_replace, $template->message);
-
-                    sendEmail($approver->user_email, $approver->fname . ' ' . $approver->lname, $template->subject, $message);
-                }
-                $status = 'success';
-                $message = 'Requisition approved';
-            } else {
-                $status = "danger";
-                $message = "requsition not approved, Next Approver not specified";
-            }
+            //     sendEmail($approver->user_email, $approver->fname . ' ' . $approver->lname, $template->subject, $message);
+            // }
+            $status = 'success';
+            $message = 'Requisition approved';
             break;
         case 'editRequisition':
             $request = DB::getInstance()->getRow("requisition", $data['id'], "*", "id");
             DB::getInstance()->update('requisition', $data['id'], [
-                'date_submitted' => ($data['date_submitted']) ? $data['date_submitted'] : $date_today,
+                'date' => ($data['date']) ? $data['date'] : $date_today,
                 'department_id' => ($data['department_id']) ? $data['department_id'] : 0,
-                'project_id' => ($data['project_id']) ? $data['project_id'] : NULL,
-                'reference_number' => $data['reference_number'],
                 'requisition_number' => $data['requisition_number'],
                 'amount_requested' => ($data['amount_requested']) ? $data['amount_requested'] : 0,
-                'requisition_status' => $request->requisition_status == 'Directly Rejected' ? 'Requested' : ($request->requisition_status == 'Financially Rejected' ? 'Directly Approved' : ($request->requisition_status == 'Rejected' ? 'Financially Approved' : $request->requisition_status)),
+                'requisition_status' => "Pending",
+                'approval_comment' => NULL,
+                'approval_by' => NULL,
+                'approval_time' => NULL,
             ], 'id');
-            DB::getInstance()->delete("requisition_items", array("requisition_id", "=", $data['id']));
-            foreach ($data['name'] as $i => $name) {
-                if ($name) {
-                    DB::getInstance()->insert('requisition_items', [
-                        'name' => $name,
-                        'quantity_requested' => ($data['quantity'][$i]) ? $data['quantity'][$i] : 0,
+            DB::getInstance()->delete("requisition_item", array("requisition_id", "=", $data['id']));
+            foreach ($data['item'] as $i => $item) {
+                if ($item) {
+                    DB::getInstance()->insert('requisition_item', [
+                        'item_id' => $item,
+                        'quantity' => ($data['quantity'][$i]) ? $data['quantity'][$i] : 0,
                         'unit_measure' => $data['unit_measure'][$i],
                         'unit_price' => ($data['unit_cost'][$i]) ? $data['unit_cost'][$i] : 0,
                         'requisition_id' => $data['id'],
-                        'payee' => $data['payee'][$i],
                     ]);
                 }
             }
@@ -331,26 +293,13 @@ if (isset($_POST['action'])) {
 
         case 'rejectRequisition':
             $id = $data['requisition_id'];
-            $request = DB::getInstance()->getRow("requisition", $id, "*", "id");
-            $status = $request->requisition_status == 'Requested' ? 'Directly Rejected' : ($request->requisition_status == 'Directly Approved' ? 'Financially Rejected' : 'Rejected');
             $array = array(
-                'direct_approver_comment' => $request->requisition_status == 'Requested' ? $data['comment'] : $request->direct_approver_comment,
-                'financial_approver_comment' => $request->requisition_status == 'Directly Approved' ? $data['comment'] : $request->financial_approver_comment,
-                'approval_comment' => $request->requisition_status == 'Financially Approved' ? $data['comment'] : $request->approval_comment,
-                'requisition_status' => $status,
+                'approval_comment' => $data['comment'],
+                'approval_by' => $user_id,
+                'approval_time' => $date_today . ' ' . date('H:i:s'),
+                'requisition_status' => "Rejected",
             );
-            $requester_id = $request->requisition_status == 'Requested' ? $request->user_id : ($request->requisition_status == 'Directly Approved' ? $request->direct_approver : $request->financial_approver_id);
             DB::getInstance()->update('requisition', $id, $array, 'id');
-            if ($requester_id) {
-                $requester = DB::getInstance()->getRow("user", $requester_id, "*", "user_id");
-                $template = DB::getInstance()->getRow("notificationtemplate", "requisition_status_update", "subject,message", "code");
-                $search = array('{names}', '{requisition_number}', '{requisition_status}', '{comment}', '{company}');
-                $replace = array($requester->fname . ' ' . $requester->lname, $request->requisition_number, $status, $data['comment'], $COMPANY_NAME);
-                $message = str_replace($search, $replace, $template->message);
-                $subject = str_replace($search, $replace, $template->subject);
-
-                sendEmail($requester->user_email, $requester->fname . ' ' . $requester->lname, $subject, $message);
-            }
             break;
         case 'deleteRequisition':
             DB::getInstance()->delete('requisition', array('id', '=', $data['requisition_id']));
@@ -360,11 +309,10 @@ if (isset($_POST['action'])) {
         case 'addLPO':
             if ($data['lpo_amount'] > 0) {
                 $unique_number = date("Ymdhis");
-                $lpo_id = DB::getInstance()->insert('lpo', [
+                $lpo_id = DB::getInstance()->insert('purchase_order', [
                     'delivery_date' => ($data['delivery_date']) ? $data['delivery_date'] : NULL,
                     'serial_number' => ($data['serial_number']) ? $data['serial_number'] : $unique_number,
                     'vendor_details' => $data['vendor'],
-                    'user_id' => $user_id,
                     'payment_terms' => $data['payment_terms'],
                     'requisition_id' => ($data['requisition_id']) ? $data['requisition_id'] : 0,
                     'delivery_point' => $data['delivery_point'],
@@ -374,7 +322,7 @@ if (isset($_POST['action'])) {
                 if ($lpo_id) {
                     foreach ($data['item_id'] as $i => $item_id) {
                         if ($item_id) {
-                            DB::getInstance()->update('requisition_items', $item_id, ['lpo_id' => $lpo_id], 'id');
+                            DB::getInstance()->update('requisition_item', $item_id, ['purchase_order_id' => $lpo_id], 'id');
                         }
                     }
                 }
@@ -409,6 +357,29 @@ if (isset($_POST['action'])) {
             DB::getInstance()->delete('lpo', array('id', '=', $data['lpo_id']));
             $status = 'warning';
             $message = 'LPO deleted successfully';
+            break;
+
+        case 'addRFP':
+            $rfp=$data['rfp'];
+            $arr=array('requisition_id'=>$data['requisition_id']?$data['requisition_id']:null,'user_id'=>$user_id);
+            foreach($rfp AS $key=>$val){
+                $arr[$key]=$val;
+            }
+            $id = DB::getInstance()->insert('rfp', $arr);
+            if ($id) {
+                foreach ($data['item_id'] as $i => $item) {
+                    if ($item) {
+                        DB::getInstance()->insert('rfp_item', [
+                            'item_id' => $item,
+                            'quantity' => ($data['quantity'][$item]) ? $data['quantity'][$item] : 0,
+                            'rfp_id' => $id,
+                            'description' => $data['description'][$item],
+                        ]);
+                    }
+                }
+            }
+            $status = 'success';
+            $message = 'Request for approval uploaded';
             break;
     }
     if ($message != "") {

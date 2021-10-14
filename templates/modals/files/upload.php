@@ -16,13 +16,8 @@
     </div>
 
     <input type="hidden" name="action" value="uploadFile">
-    <input type="hidden" name="client_id" value="<?php if (isset($_GET['client_id'])) echo $_GET['client_id']; ?>">
     <input type="hidden" name="requisition_id" value="<?php if (isset($_GET['requisition_id'])) echo $_GET['requisition_id']; ?>">
     <input type="hidden" name="lpo_id" value="<?php if (isset($_GET['lpo_id'])) echo $_GET['lpo_id']; ?>">
-    <input type="hidden" name="project_id" value="<?php if (isset($_GET['project_id'])) echo $_GET['project_id']; ?>">
-    <input type="hidden" name="asset_id" value="<?php if (isset($_GET['asset_id'])) echo $_GET['asset_id']; ?>">
-    <input type="hidden" name="ticketreply_id" value="0">
-
     <input type="hidden" name="reroute" value="<?php echo $_GET['reroute']; ?>">
 </div>
 <div class="modal-footer">

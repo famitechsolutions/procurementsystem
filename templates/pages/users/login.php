@@ -18,12 +18,7 @@
                     <div class="row w-100 mx-0">
                         <div class="col-lg-4 mx-auto">
                             <div class="auth-form-light text-left py-5 px-4 px-sm-5">
-                                <div class="brand-logo">
-                                    <img src="<?php echo $logo ?>" style="width:100%" alt="">
-                                </div>
                                 <?php
-                                    //Role::registerPermissions();
-                                    // Role::registerUserPermissions();
                                     $reset_password_url = $SYSTEM_URL . "index.php?page=" . $crypt->encode("reset_password");
                                     $email_verification_url = $SYSTEM_URL . "index.php?page=" . $crypt->encode("email_verification");
                                     if (Input::exists() && Input::get("forgot_password_btn") == "forgot_password_btn") {
