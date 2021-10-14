@@ -11,23 +11,23 @@ $request = DB::getInstance()->querySample("SELECT r.* FROM requisition r WHERE r
 <form action="" method="POST">
     <div class="modal-body">
         <div class="row">
-            <div class="col-sm-4">
-                <label>Purpose statement</label>
-                <textarea class="form-control" name="rfp[purpose_statement]"></textarea>
+            <div class="col-sm-6">
                 <div class="form-group row">
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <label>Open Date </label>
                         <input type="date" class="form-control" name="rfp[open_date]" min="<?php echo $date_today ?>" required>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <label>Close Date </label>
                         <input type="date" class="form-control" name="rfp[close_date]" min="<?php echo $date_today ?>" required>
                     </div>
-                    <div class="col-sm-6">
+                    <div class="col-sm-4">
                         <label>Desired delivery date </label>
                         <input type="date" class="form-control" name="rfp[expected_delivery_date]" min="<?php echo $date_today ?>" required>
                     </div>
                 </div>
+                <label>Purpose statement</label>
+                <textarea class="form-control summernote" name="rfp[purpose_statement]"></textarea>
                 <div class="">
                     <label>Expected attachments [<small>Add title names comma separated</small>]</label>
                     <textarea class="form-control" name="rfp[expected_attachments]"></textarea>
@@ -38,7 +38,7 @@ $request = DB::getInstance()->querySample("SELECT r.* FROM requisition r WHERE r
                 </div>
                 <div class="">
                     <label>Terms of Payment</label>
-                    <textarea class="form-control" name="rfp[payment_terms]"></textarea>
+                    <textarea class="form-control summernote" name="rfp[payment_terms]"></textarea>
                 </div>
             </div>
             <div class="col">
@@ -77,6 +77,12 @@ $request = DB::getInstance()->querySample("SELECT r.* FROM requisition r WHERE r
 
 <script type="text/javascript">
     $(function() {
-        $(".select2").select2();
+    $('.summernote').summernote({height: 150,tabsize:1,toolbar: [
+          ['style', ['style']],
+          ['font', ['bold', 'underline', 'clear']],
+          ['color', ['color']],
+          ['para', ['ul', 'ol', 'paragraph']],
+          ['table', ['table']],
+        ]});
     });
 </script>
