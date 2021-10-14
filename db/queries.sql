@@ -13,7 +13,6 @@ CREATE TABLE `logs` (
 ALTER TABLE `requisition` CHANGE `approval_status` `requisition_status` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'Pending';
 ALTER TABLE `requisition` ADD `amount_requested` DOUBLE NOT NULL DEFAULT '0' AFTER `approval_time`;
 
-
 CREATE TABLE `notificationtemplate` (
   `template_id` int(11) NOT NULL AUTO_INCREMENT,
   `code` varchar(45) DEFAULT NULL,
@@ -25,6 +24,7 @@ CREATE TABLE `notificationtemplate` (
   `status` int(11) DEFAULT 1,
   PRIMARY KEY (`template_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+<<<<<<< HEAD
 
 ALTER TABLE `attachment` ADD `status` INT NOT NULL DEFAULT '1' AFTER `requisition_id`;
 ALTER TABLE `requisition_item` ADD `unit_measure` VARCHAR(45) NULL DEFAULT NULL AFTER `status`;
@@ -65,3 +65,6 @@ CREATE TABLE `rfp_item` (
   CONSTRAINT `rfp_item_ibfk_2` FOREIGN KEY (`rfp_id`) REFERENCES `rfp` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+=======
+>>>>>>> 8e712ef62b1c369a49e7a302db7ebd9f60a4a5b6
+>>>>>>> c3dc6aa426297da579f6e15c2cfe7b9a76b0eb09

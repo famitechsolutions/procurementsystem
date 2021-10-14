@@ -38,6 +38,17 @@ $user_id = $_SESSION['system_user_id'];
                 </ul>
             </div>
         </li>
+        <li class="nav-item active">
+            <a class="nav-link collapsed" aria-expanded="<?php echo ($page_in_settings) ? 'true' : 'false' ?>" data-toggle="collapse" href="#ui-bids">
+                <i class="fa fa-dashcube menu-icon"></i><span class="menu-title">Bids</span> <i class="menu-arrow"></i> </a>
+            <div class="collapse show" id="ui-bids">
+                <ul class="nav flex-column sub-menu">
+                    <li class="nav-item"><a class="nav-link" href="#">Create Request For proposal</a> </li>
+                    <li class="nav-item"><a class="nav-link" href="#">Manage suppliers</a> </li>
+                    <li class="nav-item"><a class="nav-link" href="">Criteria For Bid Selection</a> </li>
+                </ul>
+            </div>
+        </li>
         <li class="nav-item"><a class="nav-link" href="index.php?page=<?php echo $crypt->encode('logout') ?>"><i class="fa fa-power-off menu-icon"></i><span class="menu-title"> Logout</span></a></li>
     </ul>
 </nav>
