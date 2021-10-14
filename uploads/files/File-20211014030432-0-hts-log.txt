@@ -1,0 +1,38 @@
+HTTrack3.48-21 launched on Sun, 18 Jul 2021 08:22:13 at https://bootstrapdash.com/demo/equinox/template/index.html
+(httrack https://bootstrapdash.com/demo/equinox/template/index.html -O /home/wilber/Downloads/templates )
+
+Information, Warnings and Errors reported for this mirror:
+note:	the hts-log.txt file, and hts-cache folder, may contain sensitive information,
+	such as username/password authentication for websites mirrored in this project
+	do not share these files/folders if you want these information to remain private
+
+08:26:58	Warning: 	Moved Permanently for bootstrapdash.com/robots.txt
+08:26:58	Warning: 	Redirected link is identical because of 'URL Hack' option: bootstrapdash.com/robots.txt and https://bootstrapdash.com/robots.txt
+08:26:58	Warning: 	Warning moved treated for bootstrapdash.com/robots.txt (real one is https://bootstrapdash.com/robots.txt)
+08:26:58	Warning: 	Moved Permanently for bootstrapdash.com/demo/equinox/template/demo/vertical-default-light/
+08:26:58	Warning: 	Redirected link is identical because of 'URL Hack' option: bootstrapdash.com/demo/equinox/template/demo/vertical-default-light/ and https://bootstrapdash.com/demo/equinox/template/demo/vertical-default-light/
+08:26:58	Warning: 	File has moved from bootstrapdash.com/demo/equinox/template/demo/vertical-default-light/ to https://bootstrapdash.com/demo/equinox/template/demo/vertical-default-light/
+08:26:58	Warning: 	File not parsed, looks like binary: https://bootstrapdash.com/demo/equinox/template/vendors/mdi/fonts/materialdesignicons-webfont.woff2?v=3.7.95
+08:26:58	Warning: 	Retry after error -4 (No data (connection closed)) at link https://bootstrapdash.com/demo/equinox/template/vendors/mdi/fonts/materialdesignicons-webfont.woff?v=3.7.95 (from https://bootstrapdash.com/demo/equinox/template/vendors/mdi/css/materialdesignicons.min.css)
+08:26:58	Warning: 	File not parsed, looks like binary: https://bootstrapdash.com/demo/equinox/template/vendors/font-awesome/fonts/fontawesome-webfont.woff2?v=4.7.0
+08:26:58	Warning: 	File not parsed, looks like binary: https://bootstrapdash.com/demo/equinox/template/fonts/poppins/Poppins-Light.woff2
+08:26:58	Warning: 	File not parsed, looks like binary: https://bootstrapdash.com/demo/equinox/template/fonts/poppins/Poppins-Bold.woff2
+08:26:58	Warning: 	File not parsed, looks like binary: https://bootstrapdash.com/demo/equinox/template/fonts/poppins/Poppins-Medium.woff2
+08:26:58	Warning: 	File not parsed, looks like binary: https://bootstrapdash.com/demo/equinox/template/fonts/poppins/Poppins-Regular.woff2
+08:26:58	Warning: 	File not parsed, looks like binary: https://bootstrapdash.com/demo/equinox/template/fonts/poppins/Poppins-Black.woff2
+08:26:58	Warning: 	Retry after error -4 (No data (connection closed)) at link https://bootstrapdash.com/demo/equinox/template/images/logo-mini.svg (from https://bootstrapdash.com/demo/equinox/template/demo/vertical-default-light/index.html)
+08:29:01	Warning: 	Retry after error -4 (No data (connection closed)) at link https://bootstrapdash.com/demo/equinox/template/js/data-table.js (from https://bootstrapdash.com/demo/equinox/template/demo/vertical-default-light/pages/tables/data-table.html)
+08:31:55	Warning: 	Retry after error -4 (No data (connection closed)) at link https://bootstrapdash.com/demo/equinox/template/images/samples/1280x768/5.jpg (from https://bootstrapdash.com/demo/equinox/template/demo/vertical-default-light/pages/samples/profile.html)
+08:32:00	Warning: 	Retry after error -4 (No data (connection closed)) at link https://bootstrapdash.com/demo/equinox/template/vendors/tinymce/themes/modern/theme.js (from https://bootstrapdash.com/demo/equinox/template/demo/horizontal-default-dark/pages/forms/text_editor.html)
+08:32:01	Warning: 	Retry after error -4 (No data (connection closed)) at link https://bootstrapdash.com/demo/equinox/template/demo/vertical-light-sidebar/pages/forms/lib/codemirror.css (from https://bootstrapdash.com/demo/equinox/template/demo/vertical-light-sidebar/pages/forms/code_editor.html)
+08:32:07	Warning: 	Retry after error -4 (No data (connection closed)) at link https://bootstrapdash.com/demo/equinox/template/vendors/flag-icon-css/flags/4x3/my.svg (from https://bootstrapdash.com/demo/equinox/template/vendors/flag-icon-css/css/flag-icon.min.css)
+08:32:07	Warning: 	File not parsed, looks like binary: https://bootstrapdash.com/demo/equinox/template/vendors/simple-line-icons/fonts/Simple-Line-Icons.woff2?v=2.4.0
+08:32:07	Warning: 	Moved Permanently for https://bootstrapdash.com/demo/equinox/template/vendors/tinymce/themes/modern/theme.js
+08:32:07	Warning: 	Redirected link is identical because of 'URL Hack' option: https://bootstrapdash.com/demo/equinox/template/vendors/tinymce/themes/modern/theme.js and https://www.bootstrapdash.com/demo/equinox/template/vendors/tinymce/themes/modern/theme.js
+08:32:07	Warning: 	Warning moved treated for https://bootstrapdash.com/demo/equinox/template/vendors/tinymce/themes/modern/theme.js (real one is https://www.bootstrapdash.com/demo/equinox/template/vendors/tinymce/themes/modern/theme.js)
+08:32:07	Warning: 	Moved Permanently for https://bootstrapdash.com/demo/equinox/template/demo/vertical-light-sidebar/pages/forms/lib/codemirror.css
+08:32:07	Warning: 	Redirected link is identical because of 'URL Hack' option: https://bootstrapdash.com/demo/equinox/template/demo/vertical-light-sidebar/pages/forms/lib/codemirror.css and https://www.bootstrapdash.com/demo/equinox/template/demo/vertical-light-sidebar/pages/forms/lib/codemirror.css
+08:32:07	Warning: 	Warning moved treated for https://bootstrapdash.com/demo/equinox/template/demo/vertical-light-sidebar/pages/forms/lib/codemirror.css (real one is https://www.bootstrapdash.com/demo/equinox/template/demo/vertical-light-sidebar/pages/forms/lib/codemirror.css)
+
+HTTrack Website Copier/3.48-21 mirror complete in 9 minutes 54 seconds : 1654 links scanned, 1642 files written (70128232 bytes overall) [33188234 bytes received at 55872 bytes/sec], 43709233 bytes transferred using HTTP compression in 972 files, ratio 14%, 52.5 requests per connection
+(No errors, 27 warnings, 0 messages)

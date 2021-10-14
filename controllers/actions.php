@@ -178,7 +178,6 @@ if (isset($_POST['action'])) {
             $message = 'Supplier(s) uploaded successfully';
             break;
         case 'uploadFile':
-            error_reporting(E_ALL);
             $files = $_FILES;
             $total = count($files['file']['name']);
 
@@ -202,6 +201,7 @@ if (isset($_POST['action'])) {
                         DB::getInstance()->insert("attachment", [
                             "requisition_id" => $data['requisition_id'] ? $data['requisition_id'] : NULL,
                             "purchase_order_id" => $data['lpo_id'] ? $data['lpo_id'] : NULL,
+                            'rfp_id' => $data['rfp_id'] ? $data['rfp_id'] : NULL,
                             "title" => $data['name'],
                             "url" => $filename,
                         ]);
@@ -353,17 +353,16 @@ if (isset($_POST['action'])) {
             }
             break;
         case 'deleteLPO':
-            //DB::getInstance()->update('requisition_items', $data['lpo_id'], ['lpo_id' => NULL], 'lpo_id');
             DB::getInstance()->delete('lpo', array('id', '=', $data['lpo_id']));
             $status = 'warning';
             $message = 'LPO deleted successfully';
             break;
 
         case 'addRFP':
-            $rfp=$data['rfp'];
-            $arr=array('requisition_id'=>$data['requisition_id']?$data['requisition_id']:null,'user_id'=>$user_id);
-            foreach($rfp AS $key=>$val){
-                $arr[$key]=$val;
+            $rfp = $data['rfp'];
+            $arr = array('requisition_id' => $data['requisition_id'] ? $data['requisition_id'] : null, 'user_id' => $user_id);
+            foreach ($rfp as $key => $val) {
+                $arr[$key] = $val;
             }
             $id = DB::getInstance()->insert('rfp', $arr);
             if ($id) {
@@ -374,12 +373,18 @@ if (isset($_POST['action'])) {
                             'quantity' => ($data['quantity'][$item]) ? $data['quantity'][$item] : 0,
                             'rfp_id' => $id,
                             'description' => $data['description'][$item],
+                            'status' => 'Pending'
                         ]);
                     }
                 }
             }
             $status = 'success';
             $message = 'Request for approval uploaded';
+            break;
+        case 'openRFP':
+            DB::getInstance()->update('rfp', $data['id'], array('rfp_status' => "Open"), 'id');
+            $status = 'warning';
+            $message = 'Item opened successfully';
             break;
     }
     if ($message != "") {
