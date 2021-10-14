@@ -24,7 +24,6 @@ CREATE TABLE `notificationtemplate` (
   `status` int(11) DEFAULT 1,
   PRIMARY KEY (`template_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-<<<<<<< HEAD
 
 ALTER TABLE `attachment` ADD `status` INT NOT NULL DEFAULT '1' AFTER `requisition_id`;
 ALTER TABLE `requisition_item` ADD `unit_measure` VARCHAR(45) NULL DEFAULT NULL AFTER `status`;
@@ -65,6 +64,7 @@ CREATE TABLE `rfp_item` (
   CONSTRAINT `rfp_item_ibfk_2` FOREIGN KEY (`rfp_id`) REFERENCES `rfp` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+<<<<<<< HEAD
 =======
 >>>>>>> 8e712ef62b1c369a49e7a302db7ebd9f60a4a5b6
 >>>>>>> c3dc6aa426297da579f6e15c2cfe7b9a76b0eb09
@@ -87,3 +87,7 @@ CREATE TABLE IF NOT EXISTS `contract_application` (
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 COMMIT;
+=======
+
+ALTER TABLE `attachment` ADD `rfp_id` INT NULL DEFAULT NULL AFTER `requisition_id`;
+>>>>>>> 40ff8895a7a3767d852d9c72457699f48f067718

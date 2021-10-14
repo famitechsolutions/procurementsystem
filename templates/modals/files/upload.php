@@ -18,6 +18,7 @@
     <input type="hidden" name="action" value="uploadFile">
     <input type="hidden" name="requisition_id" value="<?php if (isset($_GET['requisition_id'])) echo $_GET['requisition_id']; ?>">
     <input type="hidden" name="lpo_id" value="<?php if (isset($_GET['lpo_id'])) echo $_GET['lpo_id']; ?>">
+    <input type="hidden" name="rfp_id" value="<?php if (isset($_GET['rfp_id'])) echo $_GET['rfp_id']; ?>">
     <input type="hidden" name="reroute" value="<?php echo $_GET['reroute']; ?>">
 </div>
 <div class="modal-footer">
@@ -25,6 +26,3 @@
     <button type="submit" class="btn btn-primary"><i class="fa fa-upload"></i> <?php _e('Upload'); ?></button>
 </div>
 
-<script type="text/javascript">
-    $(".select2").select2();
-</script>
