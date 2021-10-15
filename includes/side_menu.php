@@ -10,31 +10,23 @@ $user_id = $_SESSION['system_user_id'];
                 <i class="fa fa-home menu-icon"></i> <span class="menu-title">Dashboard</span>
             </a>
         </li>
+        <?php if(in_array("viewUsers",$user_permissions)){?>
         <li class="nav-item <?php echo ($page == 'users') ? 'active' : '' ?>">
             <a class="nav-link" href="index.php?page=<?php echo $crypt->encode('users') ?>">
                 <i class="fa fa-users menu-icon"></i> <span class="menu-title">Users</span>
             </a>
         </li>
+        <?php } if(in_array("viewRequisition",$user_permissions)){?>
         <li class="nav-item <?php echo ($page == 'requisition') ? 'active' : '' ?>">
             <a class="nav-link" href="index.php?page=<?php echo $crypt->encode('requisition') ?>">
                 <i class="fa fa-bars menu-icon"></i> <span class="menu-title">Requistions</span>
             </a>
         </li>
+        <?php }?>
         <li class="nav-item <?php echo ($page == 'rfps') ? 'active' : '' ?>">
             <a class="nav-link" href="index.php?page=<?php echo $crypt->encode('rfps') ?>">
                 <i class="fa fa-bars menu-icon"></i> <span class="menu-title">Request for proposals</span>
             </a>
-        </li>
-        <li class="nav-item active">
-            <a class="nav-link collapsed" aria-expanded="<?php echo ($page_in_settings) ? 'true' : 'false' ?>" data-toggle="collapse" href="#ui-bids">
-                <i class="fa fa-dashcube menu-icon"></i><span class="menu-title">Bids</span> <i class="menu-arrow"></i> </a>
-            <div class="collapse show" id="ui-bids">
-                <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"><a class="nav-link" href="index.php?page=<?php echo $crypt->encode('rfps') ?>">Create Request For proposal</a> </li>
-                    <li class="nav-item"><a class="nav-link" href="#">Manage suppliers</a> </li>
-                    <li class="nav-item"><a class="nav-link" href="">Criteria For Bid Selection</a> </li>
-                </ul>
-            </div>
         </li>
         <li class="nav-item"><a class="nav-link" href="index.php?page=<?php echo $crypt->encode('logout') ?>"><i class="fa fa-power-off menu-icon"></i><span class="menu-title"> Logout</span></a></li>
     </ul>

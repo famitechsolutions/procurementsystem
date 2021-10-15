@@ -9,7 +9,7 @@ if (isset($_POST['action'])) {
     $message = "";
     $data = $_POST;
     switch ($_POST['action']) {
-        //settings
+            //settings
         case "generalSettings":
             $settings = Input::get("settings");
             $company_logo_name = $_FILES["logo"]["name"];
@@ -97,20 +97,27 @@ if (isset($_POST['action'])) {
                 }
             }
             break;
+        case "editNotificationTemplate":
+            $code = $_POST['code'];
+            $data = array('code' => $code, 'name' => $_POST['name'], 'subject' => $_POST['subject'], 'message' => $_POST['message'], 'sms' => $_POST['sms']);
+            if (DB::getInstance()->checkRows("SELECT code FROM notificationtemplate WHERE code='$code'")) {
+                DB::getInstance()->update('notificationtemplate', $code, $data, 'code');
+            } else {
+                DB::getInstance()->insert('notificationtemplate', $data);
+            }
+            $message = 'Template updated successfully.';
+            $status = 'success';
+            break;
         case 'editUserProfile':
             $data = $_POST;
             $array = array(
                 'fname' => $data['fname'],
                 'lname' => $data['lname'],
-                'theme' => $data['theme'],
-                'sidebar' => $data['sidebar'],
                 'dob' => ($data['dob']) ? $data['dob'] : NULL,
-                'national_id' => $data['national_id'],
-                'user_phone' => $data['user_phone'],
+                'nin' => $data['nin'],
+                'phone' => $data['phone'],
                 'designation' => $data['designation'],
-                'gender' => $data['gender'],
-                'employee_number' => $data['employee_number'],
-                'layout' => $data['layout']
+                'gender' => $data['gender']
             );
             if ($data['password'] && $data['password'] == $data['confirm_password']) {
                 $array['password'] = sha1($data['password']);
@@ -119,7 +126,7 @@ if (isset($_POST['action'])) {
             $attachment_tmp = $_FILES["profile_picture"]["tmp_name"];
             if ($attachment_name != "") {
                 $extension = end(explode(".", $attachment_name));
-                $image = DB::getInstance()->getName("user", $data['user_id'], "photo", "user_id");
+                $image = DB::getInstance()->getName("user", $data['user_id'], "photo", "id");
                 if ($image) {
                     unlink("uploads/user_profiles/" . $image);
                 }
@@ -131,20 +138,20 @@ if (isset($_POST['action'])) {
                     $_SESSION['user_profile_picture'] = $file_url;
                 }
             }
-            DB::getInstance()->update('user', $data['user_id'], $array, 'user_id');
+            DB::getInstance()->update('user', $data['user_id'], $array, 'id');
             if ($user_id == $data['user_id']) {
                 $_SESSION['user_full_names'] = $data['fname'] . ' ' . $data['lname'];
             }
             DB::getInstance()->insert("logs", array("user_id" => $user_id, "log_action" => "changed user information for user id " . $data['user_id']));
 
             break;
-        //Register User
+            //Register User
         case 'registerUser':
-            
-            $array = array(
+            $email = $data['email'];
+            $arr= array(
                 'fname' => $data['fname'],
                 'lname' => $data['lname'],
-                'username' => $data['username'],
+                'username' => $data['email'],
                 'category' => 'Supplier',
                 'gender' => $data['gender'],
                 'email' => $data['email'],
@@ -152,32 +159,31 @@ if (isset($_POST['action'])) {
                 'address' => $data['address'],
                 'phone' => $data['phone'],
                 'nin' => $data['nin'],
-                'dob' => $data['dob'],
-                'is_verified' =>'1'
+                'dob' => $data['dob']?$data['dob']:null,
+                'is_verified' => '0',
             );
-            if ($data['password'] != '' || $nin != '') {
-                $array['password'] = sha1($data['password']);
+            if ($data['password'] != '') {
+                $arr['password'] = sha1($data['password']);
             }
-            
-//    var_dump($data);
-            $registerQuery = "SELECT * FROM user WHERE email='$username' AND password='$password' AND nin='$nin' ";
-            if (!DB::getInstance()->checkRows($registerQuery)) {
-                DB::getInstance()->insert('user', $array);
-                $message = 'Supplier Account Creating successfully';
-                $status = 'success';
-                
-                	    $subject = "Activate your Account ";
-	    $msg = "Please Click the link below to activate your account
-            http://localhost/procurementsystem//activate.php?email=$email&code=$validation_code";
 
-            $headers = "From: noreply@must.ac.ug";
-             send_email($email, $subject, $msg, $headers);
-                
-                } else {
-                    $message = 'Error while Creating new user';
-                    $status = 'danger';
-                }
-        //edit User
+            //    var_dump($data);
+            $registerQuery = "SELECT * FROM user WHERE email='$email'";
+            if (!DB::getInstance()->checkRows($registerQuery)) {
+                $id = DB::getInstance()->insert('user', $arr);
+                $template = DB::getInstance()->getRow("notificationtemplate", "account_activation", "subject,message", "code");
+                $search = array('{names}', '{link}', '{company}');
+                $link = $SYSTEM_URL . '?page=' . $crypt->encode('activate') . "&user_verification=true&email=$email&user=" . $crypt->encode($id);
+                $body_replace = array($data['fname'] . ' ' . $data['lname'], $link, $COMPANY_NAME);
+                $msg = str_replace($search, $body_replace, $template->message);
+                sendEmail($email, $data['fname'] . ' ' . $data['lname'], $template->subject, $msg);
+                $message = 'Supplier account created successfully, check your email to verify and activate your account';
+                $status = 'success';
+            } else {
+                $message = 'Error while Creating new user';
+                $status = 'danger';
+            }
+            break;
+            //edit User
         case 'editUser':
             $array = array(
                 'fname' => $data['fname'],
@@ -189,7 +195,7 @@ if (isset($_POST['action'])) {
                 'address' => $data['address'],
                 'phone' => $data['phone'],
                 'nin' => $data['nin'],
-                    // 'is_approved' => 1
+                // 'is_approved' => 1
             );
             if ($data['password'] != '') {
                 $array['password'] = sha1($data['password']);
@@ -312,7 +318,7 @@ if (isset($_POST['action'])) {
                 'approval_comment' => NULL,
                 'approval_by' => NULL,
                 'approval_time' => NULL,
-                    ], 'id');
+            ], 'id');
             DB::getInstance()->delete("requisition_item", array("requisition_id", "=", $data['id']));
             foreach ($data['item'] as $i => $item) {
                 if ($item) {
@@ -382,7 +388,7 @@ if (isset($_POST['action'])) {
                     'delivery_point' => $data['delivery_point'],
                     'order_date' => ($data['order_date']) ? $data['order_date'] : NULL,
                     'tax' => ($data['percentage_tax']) ? round(($data['percentage_tax'] / 100) * $data['lpo_amount'], 2) : 0
-                        ], 'id');
+                ], 'id');
                 $status = 'success';
                 $message = 'LPO updated successfully';
             } else {
@@ -399,7 +405,7 @@ if (isset($_POST['action'])) {
         case 'addRFP':
             $rfp = $data['rfp'];
             $rfp['requisition_id'] = $data['requisition_id'] ? $data['requisition_id'] : null;
-            $rfp['user_id']=$user_id;
+            $rfp['user_id'] = $user_id;
             $id = DB::getInstance()->insert('rfp', $rfp);
             if ($id) {
                 foreach ($data['item_id'] as $i => $item) {
@@ -418,12 +424,12 @@ if (isset($_POST['action'])) {
             $message = 'Request for approval uploaded';
             break;
         case 'editRFP':
-            $id=$data['id'];
+            $id = $data['id'];
             $rfp = $data['rfp'];
             $rfp['requisition_id'] = $data['requisition_id'] ? $data['requisition_id'] : null;
-            $rfp['user_id']=$user_id;
-            $rfp['rfp_status']='Pending';
-            DB::getInstance()->update('rfp',$id, $rfp,'id');
+            $rfp['user_id'] = $user_id;
+            $rfp['rfp_status'] = 'Pending';
+            DB::getInstance()->update('rfp', $id, $rfp, 'id');
             if ($id) {
                 DB::getInstance()->delete("rfp_item", array("rfp_id", "=", $data['id']));
                 foreach ($data['item_id'] as $i => $item) {
@@ -441,11 +447,11 @@ if (isset($_POST['action'])) {
             $status = 'success';
             $message = 'Request for approval updated';
             break;
-            case 'deleteRFP':
-                DB::getInstance()->delete('rfp', array('id', '=', $data['id']));
-                $status = 'warning';
-                $message = 'Request deleted successfully';
-                break;
+        case 'deleteRFP':
+            DB::getInstance()->delete('rfp', array('id', '=', $data['id']));
+            $status = 'warning';
+            $message = 'Request deleted successfully';
+            break;
         case 'openRFP':
             DB::getInstance()->update('rfp', $data['id'], array('rfp_status' => "Open"), 'id');
             $status = 'warning';
@@ -466,6 +472,6 @@ if (isset($_POST['action'])) {
     if ($message != "") {
         $_SESSION["message"] = array('status' => $status, 'message' => $message);
     }
-    //Redirect::to('?' . $crypt->decode($_POST['reroute']));
+    Redirect::to('?' . $crypt->decode($_POST['reroute']));
     //Redirect::to("index.php?page=" . $_POST['page'] . "&tab=" . $_POST['tab']);
 }

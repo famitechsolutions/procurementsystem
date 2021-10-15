@@ -73,9 +73,14 @@ if (!isset($_GET['modal'])) {
                 $page_title = "Users";
             include 'templates/pages/users/' . $page . '.php';
             break;
-        case 'email_verification':
+            case 'email_verification':
+                if (file_exists('templates/pages/users/' . $page . '.php'))
+                    $page_title = "Users";
+                include 'templates/pages/users/' . $page . '.php';
+                break;
+        case 'activate':
             if (file_exists('templates/pages/users/' . $page . '.php'))
-                $page_title = "Users";
+                $page_title = "Activation";
             include 'templates/pages/users/' . $page . '.php';
             break;
         case 'reset_password':

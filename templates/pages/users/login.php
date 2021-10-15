@@ -89,7 +89,7 @@
                                         <input type="password" class="form-control form-control-lg" name="password" placeholder="Password" required>
                                     </div>
                                     <div class="mt-3">
-                                        <button class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn" name="login_button" value="login_button" type="submit">SIGN IN</button>
+                                        <button class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn btn-block" name="login_button" value="login_button" type="submit">SIGN IN</button>
                                     </div>
                                     <div class="my-2 d-flex justify-content-between align-items-center">
                                         <div class="text-center mt-4 font-weight-light">
