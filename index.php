@@ -45,6 +45,7 @@ if (!isset($_GET['modal'])) {
                 $page_title = "Dashboard";
             include 'templates/pages/' . $page . '.php';
             break;
+        
         case 'search':
             if (file_exists('templates/pages/' . $page . '.php'))
                 $page_title = "Search";
@@ -80,6 +81,11 @@ if (!isset($_GET['modal'])) {
         case 'reset_password':
             if (file_exists('templates/pages/users/' . $page . '.php'))
                 include 'templates/pages/users/' . $page . '.php';
+            break;
+        case 'register':
+            if (file_exists('templates/pages/users/' . $page . '.php'))
+                $page_title = "User Registration";
+            include 'templates/pages/users/' . $page . '.php';
             break;
         case 'user_profile':
             if (file_exists('templates/pages/users/' . $page . '.php'))

@@ -54,6 +54,8 @@ define("CURRENCY_SYMBOL_LOCATION", getConfigValue("currency_symbol_location"));
 
 $roles=array("Admin","Supplier");
 
+
+
 $REQUISITION_EDITABLE_STATUS_LIST=array("Requested","Directly Rejected","Financially Rejected","Rejected");
 
 $items_per=getConfigValue("items_per_page");

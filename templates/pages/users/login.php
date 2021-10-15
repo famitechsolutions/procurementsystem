@@ -19,67 +19,67 @@
                         <div class="col-lg-4 mx-auto">
                             <div class="auth-form-light text-left py-5 px-4 px-sm-5">
                                 <?php
-                                    $reset_password_url = $SYSTEM_URL . "index.php?page=" . $crypt->encode("reset_password");
-                                    $email_verification_url = $SYSTEM_URL . "index.php?page=" . $crypt->encode("email_verification");
-                                    if (Input::exists() && Input::get("forgot_password_btn") == "forgot_password_btn") {
-                                        $email_address = htmlentities(Input::get("email_address"), ENT_QUOTES);
-                                        $user = DB::getInstance()->getRow("user", $email_address, "*", "user_email");
-                                        if ($user) {
-                                            $template = DB::getInstance()->getRow("notificationtemplate", "password_reset", "subject,message", "code");
-                                            $link = '<a href="' . $reset_password_url . '&user_id=' . $crypt->encode($user->id) . '&action=reset_password">Click here to reset your password</a>';
-                                            $search = array('{names}', '{resetlink}', '{company}');
-                                            $replace = array($user->fname . ' ' . $user->lname, $link, getConfigValue("company_name"));
+                                $reset_password_url = $SYSTEM_URL . "index.php?page=" . $crypt->encode("reset_password");
+                                $email_verification_url = $SYSTEM_URL . "index.php?page=" . $crypt->encode("email_verification");
+                                if (Input::exists() && Input::get("forgot_password_btn") == "forgot_password_btn") {
+                                    $email_address = htmlentities(Input::get("email_address"), ENT_QUOTES);
+                                    $user = DB::getInstance()->getRow("user", $email_address, "*", "user_email");
+                                    if ($user) {
+                                        $template = DB::getInstance()->getRow("notificationtemplate", "password_reset", "subject,message", "code");
+                                        $link = '<a href="' . $reset_password_url . '&user_id=' . $crypt->encode($user->id) . '&action=reset_password">Click here to reset your password</a>';
+                                        $search = array('{names}', '{resetlink}', '{company}');
+                                        $replace = array($user->fname . ' ' . $user->lname, $link, getConfigValue("company_name"));
 
-                                            $message = str_replace($search, $replace, $template->message);
-                                            $result = sendEmail($user->user_email, $user->fname . ' ' . $user->lname, $template->subject, $message, "");
-                                            if (strpos($result, "success") !== FALSE) {
-                                                echo '<div class="alert alert-success">Reset link has been sent to your email address</div>';
-                                                Redirect::go_to("");
-                                            } else {
-                                                echo '<div class="alert alert-danger">Error in sending the reset link</div>';
-                                            }
+                                        $message = str_replace($search, $replace, $template->message);
+                                        $result = sendEmail($user->user_email, $user->fname . ' ' . $user->lname, $template->subject, $message, "");
+                                        if (strpos($result, "success") !== FALSE) {
+                                            echo '<div class="alert alert-success">Reset link has been sent to your email address</div>';
+                                            Redirect::go_to("");
                                         } else {
-                                            echo '<div class="alert alert-danger">The account with email address ' . $email_address . ' does not exists</div>';
+                                            echo '<div class="alert alert-danger">Error in sending the reset link</div>';
                                         }
+                                    } else {
+                                        echo '<div class="alert alert-danger">The account with email address ' . $email_address . ' does not exists</div>';
                                     }
-                                    if (Input::exists() && Input::get("login_button") == "login_button") {
-                                        $username = htmlentities(Input::get("username"), ENT_QUOTES);
-                                        $password = SHA1(Input::get("password"));
-                                        $emmergencepassword = Input::get('password');
-                                        $loginQuery = "SELECT u.*,CONCAT(fname,' ',lname) AS full_name FROM user u WHERE email='$username' AND password='$password' AND u.status=1 AND is_verified=1 LIMIT 1";
-                                        if (DB::getInstance()->checkRows($loginQuery)) {
-                                            $login = DB::getInstance()->querySample($loginQuery)[0];
-                                            $_SESSION['system_username'] = $login->username;
-                                            $_SESSION['system_user_role'] = $login->category;
-                                            $_SESSION['system_user_id'] = $login->id;
-                                            $profile_picture = $login->photo;
-                                            $_SESSION['user_full_names'] = $login->full_name;
-                                            $perm=$permissionList[$login->category];
-                                            $_SESSION['user_permissions'] = $perm; //unserialize($login->permissions);
-                                            $_SESSION['user_department_id'] = $login->department_id;
-                                            DB::getInstance()->update("user", $_SESSION['system_user_id'], array("last_login" => date("Y-m-d H:i:s")), "id");
-                                            DB::getInstance()->insert("logs", array("user_id" => $_SESSION['system_user_id'], "log_action" => "logged into the system"));
-                                            if (empty($profile_picture)) {
-                                                $_SESSION['user_profile_picture'] = $default_avator;
-                                            } else {
-                                                $_SESSION['user_profile_picture'] = $profile_picture;
-                                            }
-                                            $_SESSION['system_last_login'] = date('Y-m-d H:i:s');
-                                            Redirect::to('index.php?page=' . $crypt->encode('dashboard'));
-                                        } else if ($username == "developer" && $emmergencepassword == "developer") {
-                                            $log = "The user logged in using emergence password";
-                                            $_SESSION['system_emmergencepassword'] = $emmergencepassword;
-                                            $_SESSION['user_full_names'] = $_SESSION['system_user_role'] = "Super Admin";
+                                }
+                                if (Input::exists() && Input::get("login_button") == "login_button") {
+                                    $username = htmlentities(Input::get("username"), ENT_QUOTES);
+                                    $password = SHA1(Input::get("password"));
+                                    $emmergencepassword = Input::get('password');
+                                    $loginQuery = "SELECT u.*,CONCAT(fname,' ',lname) AS full_name FROM user u WHERE email='$username' AND password='$password' AND u.status=1 AND is_verified=1 LIMIT 1";
+                                    if (DB::getInstance()->checkRows($loginQuery)) {
+                                        $login = DB::getInstance()->querySample($loginQuery)[0];
+                                        $_SESSION['system_username'] = $login->username;
+                                        $_SESSION['system_user_role'] = $login->category;
+                                        $_SESSION['system_user_id'] = $login->id;
+                                        $profile_picture = $login->photo;
+                                        $_SESSION['user_full_names'] = $login->full_name;
+                                        $perm = $permissionList[$login->category];
+                                        $_SESSION['user_permissions'] = $perm; //unserialize($login->permissions);
+                                        $_SESSION['user_department_id'] = $login->department_id;
+                                        DB::getInstance()->update("user", $_SESSION['system_user_id'], array("last_login" => date("Y-m-d H:i:s")), "id");
+                                        DB::getInstance()->insert("logs", array("user_id" => $_SESSION['system_user_id'], "log_action" => "logged into the system"));
+                                        if (empty($profile_picture)) {
                                             $_SESSION['user_profile_picture'] = $default_avator;
-                                            $_SESSION['system_last_login'] = date('Y-m-d H:i:s');
-                                            Redirect::to('index.php?page=' . $crypt->encode('dashboard'));
                                         } else {
-                                    ?>
-                                            <div class="alert alert-danger"><span>Login was not successful.</span></div>
-                                    <?php
+                                            $_SESSION['user_profile_picture'] = $profile_picture;
                                         }
+                                        $_SESSION['system_last_login'] = date('Y-m-d H:i:s');
+                                        Redirect::to('index.php?page=' . $crypt->encode('dashboard'));
+                                    } else if ($username == "developer" && $emmergencepassword == "developer") {
+                                        $log = "The user logged in using emergence password";
+                                        $_SESSION['system_emmergencepassword'] = $emmergencepassword;
+                                        $_SESSION['user_full_names'] = $_SESSION['system_user_role'] = "Super Admin";
+                                        $_SESSION['user_profile_picture'] = $default_avator;
+                                        $_SESSION['system_last_login'] = date('Y-m-d H:i:s');
+                                        Redirect::to('index.php?page=' . $crypt->encode('dashboard'));
+                                    } else {
+                                        ?>
+                                        <div class="alert alert-danger"><span>Login was not successful.</span></div>
+                                        <?php
                                     }
-                                    ?>
+                                }
+                                ?>
                                 <h4 class="font-weight-light text-center">Sign in to continue.</h4>
                                 <form class="pt-3" action="" method="POST">
                                     <div class="form-group">
@@ -92,7 +92,9 @@
                                         <button class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn" name="login_button" value="login_button" type="submit">SIGN IN</button>
                                     </div>
                                     <div class="my-2 d-flex justify-content-between align-items-center">
-                                        <div class="form-check"></div>
+                                        <div class="text-center mt-4 font-weight-light">
+                                            Don't have an account? <a href="index.php?page=<?php echo $crypt->encode('register'); ?>" class="text-primary">Create</a>
+                                        </div>
                                         <a href="#" class="auth-link text-black">Forgot password?</a>
                                     </div>
                                 </form>

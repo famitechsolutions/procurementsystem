@@ -9,8 +9,7 @@ if (isset($_POST['action'])) {
     $message = "";
     $data = $_POST;
     switch ($_POST['action']) {
-
-            //settings
+        //settings
         case "generalSettings":
             $settings = Input::get("settings");
             $company_logo_name = $_FILES["logo"]["name"];
@@ -139,6 +138,46 @@ if (isset($_POST['action'])) {
             DB::getInstance()->insert("logs", array("user_id" => $user_id, "log_action" => "changed user information for user id " . $data['user_id']));
 
             break;
+        //Register User
+        case 'registerUser':
+            
+            $array = array(
+                'fname' => $data['fname'],
+                'lname' => $data['lname'],
+                'username' => $data['username'],
+                'category' => 'Supplier',
+                'gender' => $data['gender'],
+                'email' => $data['email'],
+                'designation' => $data['designation'],
+                'address' => $data['address'],
+                'phone' => $data['phone'],
+                'nin' => $data['nin'],
+                'dob' => $data['dob'],
+                'is_verified' =>'1'
+            );
+            if ($data['password'] != '' || $nin != '') {
+                $array['password'] = sha1($data['password']);
+            }
+            
+//    var_dump($data);
+            $registerQuery = "SELECT * FROM user WHERE email='$username' AND password='$password' AND nin='$nin' ";
+            if (!DB::getInstance()->checkRows($registerQuery)) {
+                DB::getInstance()->insert('user', $array);
+                $message = 'Supplier Account Creating successfully';
+                $status = 'success';
+                
+                	    $subject = "Activate your Account ";
+	    $msg = "Please Click the link below to activate your account
+            http://localhost/procurementsystem//activate.php?email=$email&code=$validation_code";
+
+            $headers = "From: noreply@must.ac.ug";
+             send_email($email, $subject, $msg, $headers);
+                
+                } else {
+                    $message = 'Error while Creating new user';
+                    $status = 'danger';
+                }
+        //edit User
         case 'editUser':
             $array = array(
                 'fname' => $data['fname'],
@@ -150,7 +189,7 @@ if (isset($_POST['action'])) {
                 'address' => $data['address'],
                 'phone' => $data['phone'],
                 'nin' => $data['nin'],
-                // 'is_approved' => 1
+                    // 'is_approved' => 1
             );
             if ($data['password'] != '') {
                 $array['password'] = sha1($data['password']);
@@ -257,7 +296,6 @@ if (isset($_POST['action'])) {
             //     $search = array('{names}', '{requisition_number}', '{requisition_status}', '{comment}', '{company}');
             //     $body_replace = array($approver->fname . ' ' . $approver->lname, $request->requisition_number, $request->requisition_status, $data['comment'], $COMPANY_NAME);
             //     $message = str_replace($search, $body_replace, $template->message);
-
             //     sendEmail($approver->user_email, $approver->fname . ' ' . $approver->lname, $template->subject, $message);
             // }
             $status = 'success';
@@ -274,7 +312,7 @@ if (isset($_POST['action'])) {
                 'approval_comment' => NULL,
                 'approval_by' => NULL,
                 'approval_time' => NULL,
-            ], 'id');
+                    ], 'id');
             DB::getInstance()->delete("requisition_item", array("requisition_id", "=", $data['id']));
             foreach ($data['item'] as $i => $item) {
                 if ($item) {
@@ -344,7 +382,7 @@ if (isset($_POST['action'])) {
                     'delivery_point' => $data['delivery_point'],
                     'order_date' => ($data['order_date']) ? $data['order_date'] : NULL,
                     'tax' => ($data['percentage_tax']) ? round(($data['percentage_tax'] / 100) * $data['lpo_amount'], 2) : 0
-                ], 'id');
+                        ], 'id');
                 $status = 'success';
                 $message = 'LPO updated successfully';
             } else {
@@ -428,6 +466,6 @@ if (isset($_POST['action'])) {
     if ($message != "") {
         $_SESSION["message"] = array('status' => $status, 'message' => $message);
     }
-    Redirect::to('?' . $crypt->decode($_POST['reroute']));
+    //Redirect::to('?' . $crypt->decode($_POST['reroute']));
     //Redirect::to("index.php?page=" . $_POST['page'] . "&tab=" . $_POST['tab']);
 }
