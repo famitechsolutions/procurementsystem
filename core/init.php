@@ -66,7 +66,7 @@ $countries_list = array("Afghanistan", "Albania", "Algeria", "American Samoa", "
 
 
 $permissionList=array(
-	'Admin'=>array("manageSettings","viewLogs","addUser","viewUsers","editUser","deleteUser","viewRequisition","addRequisition","editRequisition","deleteRequisition","approveRequisition","viewLPOs","addLPO","editLPO","deleteLPO","addRFP","openRFP","editRFP","deleteRFP"),
+	'Admin'=>array("manageSettings","viewLogs","addUser","viewUsers","editUser","deleteUser","viewRequisition","addRequisition","editRequisition","deleteRequisition","approveRequisition","viewLPOs","addLPO","editLPO","deleteLPO","addRFP","openRFP","editRFP","deleteRFP","approveProposal"),
 	'Supplier'=>array()
 );
 

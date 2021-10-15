@@ -22,8 +22,7 @@
                                     <div class="card-body">
                                     <div class="card-title">System logs</div>
                                         <?php
-                                        $filterCondition=($userInfo->client_id!='')?" AND client_id='$userInfo->client_id'":"";
-                                        $logsQuery = "SELECT * FROM user u,logs l WHERE l.user_id=u.user_id $filterCondition ORDER BY log_time DESC";
+                                        $logsQuery = "SELECT * FROM user u,logs l WHERE l.user_id=u.id ORDER BY log_time DESC";
                                         if (DB::getInstance()->checkRows($logsQuery)) {
                                             ?>
                                             <table id="table" class="table table-bordered" data-toggle="table" data-pagination="true" data-search="true" data-show-columns="true" data-show-pagination-switch="true" data-key-events="true" data-show-toggle="true" data-resizable="true" data-cookie="true" data-cookie-id-table="saveId" data-show-export="true" data-click-to-select="true" data-toolbar="#toolbar">

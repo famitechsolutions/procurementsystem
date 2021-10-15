@@ -64,11 +64,6 @@ CREATE TABLE `rfp_item` (
   CONSTRAINT `rfp_item_ibfk_2` FOREIGN KEY (`rfp_id`) REFERENCES `rfp` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-<<<<<<< HEAD
-=======
->>>>>>> 8e712ef62b1c369a49e7a302db7ebd9f60a4a5b6
->>>>>>> c3dc6aa426297da579f6e15c2cfe7b9a76b0eb09
-
 
 DROP TABLE IF EXISTS `contract_application`;
 CREATE TABLE IF NOT EXISTS `contract_application` (
@@ -77,7 +72,7 @@ CREATE TABLE IF NOT EXISTS `contract_application` (
   `user_id` int(11) NOT NULL,
   `application_response` text,
   `application_date` date DEFAULT NULL,
-  `application_status` varchar(50) DEFAULT NULL,
+  `application_status` varchar(50) DEFAULT 'Pending',
   `contract_title` text,
   `contract_amount` float DEFAULT NULL,
   `start_date` date DEFAULT NULL,
@@ -85,9 +80,8 @@ CREATE TABLE IF NOT EXISTS `contract_application` (
   `supplier_signiture` varchar(100) DEFAULT NULL,
   `status` int(11) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
-COMMIT;
-=======
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 ALTER TABLE `attachment` ADD `rfp_id` INT NULL DEFAULT NULL AFTER `requisition_id`;
->>>>>>> 40ff8895a7a3767d852d9c72457699f48f067718
+
+ALTER TABLE `contract_application` CHANGE `end_date` `end_date` DATE NULL DEFAULT NULL;

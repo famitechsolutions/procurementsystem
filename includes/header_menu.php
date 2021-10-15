@@ -55,7 +55,7 @@
                     <?php
                     }
                     if (in_array("addRequisition", $user_permissions)) { ?><button onclick="showModal('index.php?modal=requisitions/add&reroute=<?php echo $crypt->encode('page=' . $_GET['page']) ?>', 'large');return false" class="dropdown-item">New Requisition</button><?php }
-                    if (in_array("addRFP", $user_permissions)) { ?><button onclick="showModal('index.php?modal=requisitions/add_rfp&reroute=<?php echo $crypt->encode('page=' . $_GET['page']) ?>', 'large');return false" class="dropdown-item">Request for proposal</button><?php }
+                    if (in_array("addRFP", $user_permissions)) { ?><button onclick="showModal('index.php?modal=proposals/add_rfp&reroute=<?php echo $crypt->encode('page=' . $_GET['page']) ?>', 'large');return false" class="dropdown-item">Request for proposal</button><?php }
                     
                     ?>
                 </div>

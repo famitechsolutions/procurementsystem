@@ -360,11 +360,9 @@ if (isset($_POST['action'])) {
 
         case 'addRFP':
             $rfp = $data['rfp'];
-            $arr = array('requisition_id' => $data['requisition_id'] ? $data['requisition_id'] : null, 'user_id' => $user_id);
-            foreach ($rfp as $key => $val) {
-                $arr[$key] = $val;
-            }
-            $id = DB::getInstance()->insert('rfp', $arr);
+            $rfp['requisition_id'] = $data['requisition_id'] ? $data['requisition_id'] : null;
+            $rfp['user_id']=$user_id;
+            $id = DB::getInstance()->insert('rfp', $rfp);
             if ($id) {
                 foreach ($data['item_id'] as $i => $item) {
                     if ($item) {
@@ -381,10 +379,50 @@ if (isset($_POST['action'])) {
             $status = 'success';
             $message = 'Request for approval uploaded';
             break;
+        case 'editRFP':
+            $id=$data['id'];
+            $rfp = $data['rfp'];
+            $rfp['requisition_id'] = $data['requisition_id'] ? $data['requisition_id'] : null;
+            $rfp['user_id']=$user_id;
+            $rfp['rfp_status']='Pending';
+            DB::getInstance()->update('rfp',$id, $rfp,'id');
+            if ($id) {
+                DB::getInstance()->delete("rfp_item", array("rfp_id", "=", $data['id']));
+                foreach ($data['item_id'] as $i => $item) {
+                    if ($item) {
+                        DB::getInstance()->insert('rfp_item', [
+                            'item_id' => $item,
+                            'quantity' => ($data['quantity'][$item]) ? $data['quantity'][$item] : 0,
+                            'rfp_id' => $id,
+                            'description' => $data['description'][$item],
+                            'status' => 'Pending'
+                        ]);
+                    }
+                }
+            }
+            $status = 'success';
+            $message = 'Request for approval updated';
+            break;
+            case 'deleteRFP':
+                DB::getInstance()->delete('rfp', array('id', '=', $data['id']));
+                $status = 'warning';
+                $message = 'Request deleted successfully';
+                break;
         case 'openRFP':
             DB::getInstance()->update('rfp', $data['id'], array('rfp_status' => "Open"), 'id');
             $status = 'warning';
             $message = 'Item opened successfully';
+            break;
+        case 'approveProposal':
+            $rfp_id = $data['rfp_id'];
+            $proposal_id = $data['proposal_id'];
+            $contract = $data['contract'];
+            $contract['application_status'] = "Approved";
+            DB::getInstance()->update("rfp", $rfp_id, array('rfp_status' => "Complete"), 'id');
+            DB::getInstance()->update("contract_application", $rfp_id, array('application_status' => "Rejected"), 'rfp_id');
+            DB::getInstance()->update("contract_application", $proposal_id, $contract, 'id');
+            $status = 'success';
+            $message = 'Proposal approved';
             break;
     }
     if ($message != "") {

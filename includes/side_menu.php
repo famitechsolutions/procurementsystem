@@ -25,19 +25,6 @@ $user_id = $_SESSION['system_user_id'];
                 <i class="fa fa-bars menu-icon"></i> <span class="menu-title">Request for proposals</span>
             </a>
         </li>
-        <li class="nav-item <?php echo ($page_in_asset_attributes) ? 'active' : '' ?>">
-            <a class="nav-link <?php echo ($page_in_asset_attributes) ? '' : 'collapsed' ?>" aria-expanded="<?php echo ($page_in_settings) ? 'true' : 'false' ?>" data-toggle="collapse" href="#ui-asset-attributes">
-                <i class="fa fa-wrench menu-icon"></i><span class="menu-title">Asset Attributes</span> <i class="menu-arrow"></i> </a>
-            <div class="collapse <?php echo ($page_in_asset_attributes) ? 'show' : '' ?>" id="ui-asset-attributes">
-                <ul class="nav flex-column sub-menu">
-                    <li class="nav-item"><a class="nav-link" href="index.php?page=<?php echo $crypt->encode('asset_categories') ?>">Asset Categories</a> </li>
-                    <li class="nav-item"><a class="nav-link" href="index.php?page=<?php echo $crypt->encode('license_categories') ?>">License Categories</a> </li>
-                    <li class="nav-item"><a class="nav-link" href="index.php?page=<?php echo $crypt->encode('asset_status_labels') ?>">Status Labels</a> </li>
-                    <li class="nav-item"><a class="nav-link" href="index.php?page=<?php echo $crypt->encode('manufacturers') ?>">Manufacturers</a> </li>
-                    <li class="nav-item"><a class="nav-link" href="index.php?page=<?php echo $crypt->encode('view_suppliers') ?>">Suppliers</a> </li>
-                </ul>
-            </div>
-        </li>
         <li class="nav-item active">
             <a class="nav-link collapsed" aria-expanded="<?php echo ($page_in_settings) ? 'true' : 'false' ?>" data-toggle="collapse" href="#ui-bids">
                 <i class="fa fa-dashcube menu-icon"></i><span class="menu-title">Bids</span> <i class="menu-arrow"></i> </a>
