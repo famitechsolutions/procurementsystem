@@ -150,7 +150,7 @@
                                                         $expanded = count($lposList) == 1 ? true : false;
                                                         foreach ($lposList as $lpo) {
                                                             $files = DB::getInstance()->querySample("SELECT * FROM attachment WHERE purchase_order_id='$lpo->id' AND status=1");
-                                                            $itemsList = DB::getInstance()->querySample("SELECT * FROM requisition_item ri,item i WHERE ri.item_id=i.id AND ri.purchase_order_id='$lpo->id' AND status=1");
+                                                            $itemsList = DB::getInstance()->querySample("SELECT * FROM requisition_item ri,item i WHERE ri.item_id=i.id AND ri.purchase_order_id='$lpo->id' AND ri.status=1");
                                                         ?>
                                                             <!--Start Loop-->
                                                             <div class="card" role="tab" id="lpo-item-<?php echo $lpo->id ?>">

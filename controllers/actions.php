@@ -361,13 +361,11 @@ if (isset($_POST['action'])) {
                 $unique_number = date("Ymdhis");
                 $lpo_id = DB::getInstance()->insert('purchase_order', [
                     'delivery_date' => ($data['delivery_date']) ? $data['delivery_date'] : NULL,
-                    'serial_number' => ($data['serial_number']) ? $data['serial_number'] : $unique_number,
-                    'vendor_details' => $data['vendor'],
-                    'payment_terms' => $data['payment_terms'],
+                    'order_number' => ($data['order_number']) ? $data['order_number'] : $unique_number,
+                    'supplier' => ($data['supplier'])?$data['supplier']:NULL,
+                    'payment_mode' => $data['payment_mode'],
                     'requisition_id' => ($data['requisition_id']) ? $data['requisition_id'] : 0,
-                    'delivery_point' => $data['delivery_point'],
-                    'order_date' => ($data['order_date']) ? $data['order_date'] : NULL,
-                    'tax' => ($data['percentage_tax']) ? round(($data['percentage_tax'] / 100) * $data['lpo_amount'], 2) : 0
+                    'date' => ($data['order_date']) ? $data['order_date'] : NULL,
                 ]);
                 if ($lpo_id) {
                     foreach ($data['item_id'] as $i => $item_id) {
@@ -386,14 +384,14 @@ if (isset($_POST['action'])) {
         case 'editLPO':
             if ($data['lpo_amount'] > 0) {
                 $unique_number = date("Ymdhis");
-                DB::getInstance()->update('lpo', $data['lpo_id'], [
+                DB::getInstance()->update('purchase_order', $data['lpo_id'], [                 
                     'delivery_date' => ($data['delivery_date']) ? $data['delivery_date'] : NULL,
-                    'serial_number' => $data['serial_number'],
-                    'vendor_details' => $data['vendor'],
-                    'payment_terms' => $data['payment_terms'],
-                    'delivery_point' => $data['delivery_point'],
-                    'order_date' => ($data['order_date']) ? $data['order_date'] : NULL,
-                    'tax' => ($data['percentage_tax']) ? round(($data['percentage_tax'] / 100) * $data['lpo_amount'], 2) : 0
+                    'order_number' => ($data['order_number']) ? $data['order_number'] : $unique_number,
+                    'supplier' => ($data['supplier'])?$data['supplier']:NULL,
+                    'payment_mode' => $data['payment_mode'],
+                    'requisition_id' => ($data['requisition_id']) ? $data['requisition_id'] : 0,
+                    'date' => ($data['order_date']) ? $data['order_date'] : NULL,
+                    
                 ], 'id');
                 $status = 'success';
                 $message = 'LPO updated successfully';

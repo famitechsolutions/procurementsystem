@@ -13,27 +13,34 @@ $request = DB::getInstance()->querySample("SELECT r.* FROM requisition r WHERE r
         <div class="form-group row">
             <div class="col-md-2">
                 <label>Vendors Name & Address. </label>
-                <input class="form-control" name="vendor">
+                <select class="form-control" name="supplier">
+                    <?php
+                    $fetchSuppliers = DB::getInstance()->querySample(""
+                            . "select * from contract_application ca, user u where ca.user_id=u.id AND ca.application_status='Approved' AND ca.status=1 AND u.is_verified=1 ");
+                    echo '<option value="" >Choose</option>';
+                        foreach ($fetchSuppliers as $i => $item) {
+                        ?>
+                    <option value="<?php echo $item->user_id ?>"><?php echo $item->fname.'-'.$item->lname ?></option>
+                    <?php
+                    }
+                    ?>
+                </select>
             </div>
             <div class="col-md-2">
                 <label>Serial No. </label>
-                <input class="form-control" name="serial_number" <?php echo $request->next_lpo_number?' readonly':''?> value="<?php echo $request->next_lpo_number?>">
+                <input class="form-control" name="order_number" value="<?php echo $request->next_lpo_number?>">
             </div>
             <div class="col-md-2">
                 <label>Delivery Date</label>
                 <input class="form-control" type="date" name="delivery_date">
             </div>
             <div class="col-md-2">
-                <label>Delivery Point</label>
-                <input class="form-control" name="delivery_point">
-            </div>
-            <div class="col-md-2">
                 <label>Order Date</label>
                 <input type="date" class="form-control" name="order_date">
             </div>
             <div class="col-md-2">
-                <label>Terms of Payment</label>
-                <input class="form-control" name="payment_terms">
+                <label>Payment Mode</label>
+                <input class="form-control" name="payment_mode">
             </div>
         </div>
 
@@ -61,7 +68,6 @@ $request = DB::getInstance()->querySample("SELECT r.* FROM requisition r WHERE r
                 <?php } ?>
             </tbody>
             <tfoot>
-                <tr><td colspan="3"></td><td>TAX:</td><td><label><input type="checkbox" name="percentage_tax" value="<?php echo $percentage_tax?>"> <?php echo $percentage_tax.'% tax'?></label></td></tr>
                 <tr><td colspan="3"></td><td>TOTAL:</td><td><input type="text" readonly class="form-control" id="general_total" name="lpo_amount"></td></tr>
             </tfoot>
         </table>

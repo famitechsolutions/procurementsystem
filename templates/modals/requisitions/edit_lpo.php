@@ -1,8 +1,8 @@
 <?php
 $id = $_GET['id'];
 $lpo_id=$_GET['lpo_id'];
-$itemsList = DB::getInstance()->querySample("SELECT * FROM requisition_items WHERE requisition_id='$id' AND lpo_id='$lpo_id' AND status=1");
-$lpo= DB::getInstance()->getRow("lpo",$lpo_id,"*","id");
+$itemsList = DB::getInstance()->querySample("SELECT * FROM requisition_item ri WHERE ri.requisition_id='$id' AND ri.purchase_order_id='$lpo_id' AND ri.status=1");
+$lpo= DB::getInstance()->getRow("purchase_order",$lpo_id,"*","id");
 ?>
 
 <div class="modal-header">
@@ -14,27 +14,34 @@ $lpo= DB::getInstance()->getRow("lpo",$lpo_id,"*","id");
         <div class="form-group row">
             <div class="col-md-2">
                 <label>Vendors Name & Address. </label>
-                <input class="form-control" name="vendor" value="<?php echo $lpo->vendor_details?>">
+                <select class="form-control" name="supplier" value="<?php echo $lpo->supplier?>">
+                    <?php
+                    $fetchSuppliers = DB::getInstance()->querySample(""
+                            . "select * from contract_application ca, user u where ca.user_id=u.id AND ca.application_status='Approved' AND ca.status=1 AND u.is_verified=1 ");
+                    echo '<option value="" >Choose</option>';
+                        foreach ($fetchSuppliers as $i => $item) {
+                        ?>
+                    <option value="<?php echo $item->user_id ?>"><?php echo $item->fname.'-'.$item->lname ?></option>
+                    <?php
+                    }
+                    ?>
+                </select>
             </div>
             <div class="col-md-2">
                 <label>Serial No. </label>
-                <input class="form-control" name="serial_number" value="<?php echo $lpo->serial_number?>">
+                <input class="form-control" name="order_number" value="<?php echo $lpo->order_number?>">
             </div>
             <div class="col-md-2">
                 <label>Delivery Date</label>
                 <input class="form-control" type="date" name="delivery_date" value="<?php echo $lpo->delivery_date?>">
             </div>
             <div class="col-md-2">
-                <label>Delivery Point</label>
-                <input class="form-control" name="delivery_point" value="<?php echo $lpo->delivery_point?>">
-            </div>
-            <div class="col-md-2">
                 <label>Order Date</label>
-                <input type="date" class="form-control" name="order_date" value="<?php echo $lpo->order_date?>">
+                <input type="date" class="form-control" name="order_date" value="<?php echo $lpo->date?>">
             </div>
             <div class="col-md-2">
-                <label>Terms of Payment</label>
-                <input class="form-control" name="payment_terms" value="<?php echo $lpo->payment_terms?>">
+                <label>Payment Mode</label>
+                <input class="form-control" name="payment_mode" value="<?php echo $lpo->payment_mode?>">
             </div>
         </div>
 
@@ -43,7 +50,7 @@ $lpo= DB::getInstance()->getRow("lpo",$lpo_id,"*","id");
                 <tr>
                     <th>Goods Description [Check to include]</th>
                     <th>Unit of Measure</th>
-                    <th>Quantity Approved</th>
+                    <th>Quantity</th>
                     <th>Unit Price</th>
                     <th>Total Price</th>
                 </tr>
@@ -51,20 +58,21 @@ $lpo= DB::getInstance()->getRow("lpo",$lpo_id,"*","id");
             <tbody  id="requisition_div">
                 <?php $percentage_tax= getConfigValue("percentage_tax");
                 $lpoValue=0;
+//                echo "SELECT * FROM requisition_item WHERE requisition_id='$id' AND purchase_order_id='$lpo_id' AND status=1";
+//                var_dump($itemsList);
                 foreach ($itemsList AS $i => $item) {
-                    $lpoValue+=$item->quantity_requested * $item->unit_price;
+                    $lpoValue+=$item->quantity * $item->unit_price;
                     ?>
                     <tr>
-                        <td><label><?php if($item->lpo_id==''){?><input type="checkbox" name="item_id[]" class="lpo-item" data-amount="<?php echo $item->quantity_requested * $item->unit_price ?>" value="<?php echo $item->id?>" onchange="calculateLPOAsmount('.lpo-item','#general_total')"> <?php }echo $item->name ?></label></td>
-                        <td><?php echo $item->quantity_requested ?></td>
+                        <td><label><?php if($item->lpo_id==''){?><input type="checkbox" name="item_id[]" class="lpo-item" data-amount="<?php echo $item->quantity_requested * $item->unit_price ?>" value="<?php echo $item->id?>" onchange="calculateLPOAsmount('.lpo-item','#general_total')"> <?php }echo DB::getInstance()->getName('item', $item->item_id, 'name', 'id') ?></label></td>
                         <td><?php echo $item->unit_measure ?></td>
+                        <td><?php echo $item->quantity ?></td>
                         <td><?php echo $item->unit_price ?></td>
-                        <td><?php echo $item->quantity_requested * $item->unit_price ?></td>
+                        <td><?php echo $item->quantity * $item->unit_price ?></td>
                     </tr>
                 <?php } ?>
             </tbody>
             <tfoot>
-                <tr><td colspan="3"></td><td>TAX:</td><td><label><input type="checkbox" name="percentage_tax" <?php echo ($lpo->tax)?'checked':'';?> value="<?php echo $percentage_tax?>"> <?php echo $percentage_tax.'% tax'?></label></td></tr>
                 <tr><td colspan="3"></td><td>TOTAL:</td><td><input type="text" readonly class="form-control" id="general_total" name="lpo_amount" value="<?php echo $lpoValue?>"></td></tr>
             </tfoot>
         </table>

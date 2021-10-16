@@ -87,3 +87,12 @@ ALTER TABLE `attachment` ADD `rfp_id` INT NULL DEFAULT NULL AFTER `requisition_i
 ALTER TABLE `contract_application` CHANGE `end_date` `end_date` DATE NULL DEFAULT NULL;
 
 ALTER TABLE `attachment` ADD `contract_application_id` INT NULL DEFAULT NULL AFTER `rfp_id`;
+
+ALTER TABLE `purchase_order` DROP `approval_status`, DROP `approval_time`, DROP `approval_comment`;
+
+ALTER TABLE `purchase_order` ADD `delivery_date` DATE NULL AFTER `payment_mode`;
+
+ALTER TABLE `purchase_order` CHANGE `supplier` `supplier` INT(11) NULL;
+
+ALTER TABLE `requisition_item` ADD `purchase_order_id` INT NULL AFTER `item_id`;
+
