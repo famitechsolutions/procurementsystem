@@ -148,7 +148,7 @@ if (isset($_POST['action'])) {
             //Register User
         case 'registerUser':
             $email = $data['email'];
-            $arr= array(
+            $arr = array(
                 'fname' => $data['fname'],
                 'lname' => $data['lname'],
                 'username' => $data['email'],
@@ -159,7 +159,7 @@ if (isset($_POST['action'])) {
                 'address' => $data['address'],
                 'phone' => $data['phone'],
                 'nin' => $data['nin'],
-                'dob' => $data['dob']?$data['dob']:null,
+                'dob' => $data['dob'] ? $data['dob'] : null,
                 'is_verified' => '0',
             );
             if ($data['password'] != '') {
@@ -467,6 +467,39 @@ if (isset($_POST['action'])) {
             DB::getInstance()->update("contract_application", $proposal_id, $contract, 'id');
             $status = 'success';
             $message = 'Proposal approved';
+            break;
+        case 'createBid':
+            $files = $_FILES;
+            if ($data['rfp_id']) {
+                $arr = array(
+                    'user_id' => $user_id,
+                    'rfp_id' => $data['rfp_id'],
+                    'application_response' => json_encode($data['question']),
+                    'application_date' => $date_today,
+                    'application_status' => 'Pending'
+                );
+                $id = DB::getInstance()->insert('contract_application', $arr);
+
+                for ($i = 0; $i < count($data['attachment_title']); $i++) {
+
+                    $targetdir = "uploads/files/";
+                    if ($files["file"]["tmp_name"][$i]) {
+
+                        $nextfileid = 'File-' . date('Ymdhis') . '-' . $i;
+                        $filename = $nextfileid . "-" . basename($files["file"]["name"][$i]);
+
+                        $targetfile = $targetdir . $filename;
+
+                        if (move_uploaded_file($files["file"]["tmp_name"][$i], $targetfile)) {
+                            DB::getInstance()->insert("attachment", [
+                                'contract_application_id' => $id,
+                                "title" => $data['attachment_title'][$i],
+                                "url" => $filename,
+                            ]);
+                        }
+                    }
+                }
+            }
             break;
     }
     if ($message != "") {

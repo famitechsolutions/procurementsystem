@@ -85,3 +85,5 @@ CREATE TABLE IF NOT EXISTS `contract_application` (
 ALTER TABLE `attachment` ADD `rfp_id` INT NULL DEFAULT NULL AFTER `requisition_id`;
 
 ALTER TABLE `contract_application` CHANGE `end_date` `end_date` DATE NULL DEFAULT NULL;
+
+ALTER TABLE `attachment` ADD `contract_application_id` INT NULL DEFAULT NULL AFTER `rfp_id`;

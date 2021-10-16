@@ -23,12 +23,16 @@
                                 $id = $crypt->decode($_GET['id']);
                                 $rfp = DB::getInstance()->querySample("SELECT *, (CASE WHEN rfp_status='Open' AND close_date<='$date_today' THEN 'Closed' ELSE r.rfp_status END)rfp_status, (CASE WHEN rfp_status='Closed' OR close_date<='$date_today' THEN 1 ELSE 0 END) is_closed FROM rfp r WHERE r.id='$id' AND status=1")[0];
                                 if ($rfp) {
-                                    $proposalsList = DB::getInstance()->querySample("SELECT u.*,CONCAT(u.fname,' ',u.lname) full_name,ca.* FROM contract_application ca, user u WHERE ca.user_id=u.id AND ca.rfp_id='$id' AND ca.status=1");
+                                    $filterCondition=$userInfo->category=='Supplier'?" AND ca.user_id='$user_id'":"";
+                                    $proposalsList = DB::getInstance()->querySample("SELECT u.*,CONCAT(u.fname,' ',u.lname) full_name,ca.* FROM contract_application ca, user u WHERE ca.user_id=u.id AND ca.rfp_id='$id' $filterCondition AND ca.status=1");
                                     $rfpFiles = DB::getInstance()->querySample("SELECT * FROM attachment WHERE rfp_id='$id' AND status=1");
                                     $itemsList = DB::getInstance()->querySample("SELECT * FROM rfp_item ri,item i WHERE i.id=ri.item_id AND ri.rfp_id='$id' AND ri.status=1");
                                 ?>
                                     <div class="card-title">
                                         Request for proposal #<?php echo $id ?> <small class="ml-4 btn btn-outline-info btn-xs">Status: <?php echo $rfp->rfp_status ?></small>
+                                        <?php if(!$proposalsList&&$rfp->rfp_status=='Open'&&$userInfo->category=='Supplier'){?>
+                                            <a class="btn btn-success btn-xs" href="?page=<?php echo $crypt->encode('create_bid')."&rfp=".$crypt->encode($rfp->id)?>">Apply now</a>
+                                            <?php }?>
                                     </div>
                                     <div class="card-body">
                                         <div class="nav-tabs-custom">
@@ -107,13 +111,13 @@
                                                         $expanded = count($proposalsList) == 1 ? true : false;
                                                         foreach ($proposalsList as $proposal) {
                                                             $statusClass = $proposal->application_status == 'Pending' ? 'btn-warning' : ($proposal->application_status == 'Approved' ? 'btn btn-success' : 'btn-danger');
-                                                            $files = DB::getInstance()->querySample("SELECT * FROM attachment WHERE purchase_order_id='$proposal->id' AND status=1");
+                                                            $files = DB::getInstance()->querySample("SELECT * FROM attachment WHERE contract_application_id='$proposal->id' AND status=1");
                                                         ?>
                                                             <!--Start Loop-->
                                                             <div class="card" role="tab" id="proposal-item-<?php echo $proposal->id ?>">
                                                                 <div class="card-header">
                                                                     <h6 class="mb-0">
-                                                                        <a class="accordion-toggle accordion-toggle-styled <?php echo $expanded ? '' : 'collapsed' ?>" data-toggle="collapse" aria-expanded="<?php echo $expanded ? 'true' : 'false' ?>" data-parent="#accordion3" href="#collapse-<?php echo $proposal->id ?>">Applicant: <?php echo $proposal->full_name; ?> <span class="btn btn-xs <?php echo $statusClass ?>">Status: <?php echo $proposal->application_status ?></span></a>
+                                                                        <a class="accordion-toggle accordion-toggle-styled <?php echo $expanded ? '' : 'collapsed' ?>" data-toggle="collapse" aria-expanded="<?php echo $expanded ? 'true' : 'false' ?>" data-parent="#accordion3" href="#collapse-<?php echo $proposal->id ?>">Applicant: <?php echo $proposal->full_name.', '.$proposal->email; ?> <span class="btn btn-xs <?php echo $statusClass ?>">Status: <?php echo $proposal->application_status ?></span></a>
                                                                     </h6>
                                                                 </div>
                                                                 <div id="collapse-<?php echo $proposal->id ?>" class=" <?php echo $expanded ? 'show' : 'collapse' ?>" aria-labelledby="proposal-item-<?php echo $proposal->id ?>">
@@ -127,7 +131,7 @@
                                                                             <?php } ?>
                                                                             <div class="btn-group- pull-right" style="padding:6px;">
                                                                                 <?php if ($rfp->is_closed && $proposal->application_status == 'Pending' && in_array("approveProposal", $user_permissions)) { ?><a class="btn btn-success btn-xs" onClick='showModal("index.php?modal=proposals/approve_proposal&reroute=<?php echo $crypt->encode('page=' . $_GET['page'] . '&id=' . $_GET['id'] . '&tab=proposals-tab') . '&rfp_id=' . $rfp->id . '&proposal_id=' . $proposal->id; ?>&tab=proposals-tab");return false'>Approve Proposal</a><?php } ?>
-                                                                                <?php if ($proposal->user_id == $user_id && $rfp->rfp_status == 'Open') { ?><a data-toggle='tooltip' title='<?php _e('Upload Attachment'); ?>' class="btn btn-default btn-xs" onClick='showModal("index.php?modal=files/upload&reroute=<?php echo $crypt->encode('page=' . $_GET['page'] . '&id=' . $_GET['id'] . '&tab=proposals-tab') . '&id=' . $request->id . '&proposal_id=' . $proposal->id . '&project_id=' . $request->project_id . '&client_id=' . $request->client_id; ?>&tab=proposals-tab");return false'>Upload Attachment</a><?php } ?>
+                                                                                <!-- <?php if ($proposal->user_id == $user_id && $rfp->rfp_status == 'Open') { ?><a data-toggle='tooltip' title='<?php _e('Upload Attachment'); ?>' class="btn btn-default btn-xs" onClick='showModal("index.php?modal=files/upload&reroute=<?php echo $crypt->encode('page=' . $_GET['page'] . '&id=' . $_GET['id'] . '&tab=proposals-tab') . '&id=' . $request->id . '&proposal_id=' . $proposal->id . '&project_id=' . $request->project_id . '&client_id=' . $request->client_id; ?>&tab=proposals-tab");return false'>Upload Attachment</a><?php } ?> -->
                                                                                 <a data-toggle='tooltip' onclick="PrintSection('proposalsection<?php echo $proposal->id ?>', '21.0', '29.7')" title='<?php _e('Print proposal'); ?>' class="btn btn-default btn-xs">Print</a>
                                                                             </div>
 

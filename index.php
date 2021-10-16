@@ -45,7 +45,7 @@ if (!isset($_GET['modal'])) {
                 $page_title = "Dashboard";
             include 'templates/pages/' . $page . '.php';
             break;
-        
+
         case 'search':
             if (file_exists('templates/pages/' . $page . '.php'))
                 $page_title = "Search";
@@ -73,11 +73,11 @@ if (!isset($_GET['modal'])) {
                 $page_title = "Users";
             include 'templates/pages/users/' . $page . '.php';
             break;
-            case 'email_verification':
-                if (file_exists('templates/pages/users/' . $page . '.php'))
-                    $page_title = "Users";
-                include 'templates/pages/users/' . $page . '.php';
-                break;
+        case 'email_verification':
+            if (file_exists('templates/pages/users/' . $page . '.php'))
+                $page_title = "Users";
+            include 'templates/pages/users/' . $page . '.php';
+            break;
         case 'activate':
             if (file_exists('templates/pages/users/' . $page . '.php'))
                 $page_title = "Activation";
@@ -143,20 +143,25 @@ if (!isset($_GET['modal'])) {
                 $page_title = "LPOs";
             include 'templates/pages/requisitions/' . $page . '.php';
             break;
+        case 'manage_requisition':
+            if (file_exists('templates/pages/requisitions/' . $page . '.php'))
+                $page_title = "Single";
+            include 'templates/pages/requisitions/' . $page . '.php';
+            break;
         case 'rfps':
             if (file_exists('templates/pages/requisitions/' . $page . '.php'))
                 $page_title = "RFPs";
             include 'templates/pages/requisitions/' . $page . '.php';
             break;
         case 'rfp':
-                if (file_exists('templates/pages/requisitions/' . $page . '.php'))
-                    $page_title = "RFP";
-                include 'templates/pages/requisitions/' . $page . '.php';
-                break;
-        case 'manage_requisition':
             if (file_exists('templates/pages/requisitions/' . $page . '.php'))
-                $page_title = "Single";
+                $page_title = "RFP";
             include 'templates/pages/requisitions/' . $page . '.php';
+            break;
+        case 'create_bid':
+            if (file_exists('templates/pages/bids/' . $page . '.php'))
+                $page_title = "BID";
+            include 'templates/pages/bids/' . $page . '.php';
             break;
     }
 }
