@@ -8,22 +8,6 @@
     </div>
     <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
 
-        <ul class="navbar-nav mr-lg-2">
-                <form action="" method="">
-                    <li class="nav-item nav-search d-none d-lg-block">
-                        <div class="input-group">
-                            <input name="page" value="<?php echo $crypt->encode("search") ?>" type="hidden">
-                            <input type="text" class="form-control" placeholder="search" required name="s" aria-label="search" aria-describedby="search">
-                            <div class="input-group-append">
-                                <button class="input-group-text" id="search">
-                                    <i class="mdi mdi-magnify"></i>
-                                </button>
-                            </div>
-
-                        </div>
-                    </li>
-                </form>
-            </ul>
         <ul class="navbar-nav navbar-nav-right">
             <?php if (in_array("manageSettings", $user_permissions) || in_array("viewLogs", $user_permissions) || in_array("addUserRole", $user_permissions) || in_array("uploadKPI", $user_permissions)) {
                 $page_in_settings = ($page == 'site_settings' || $page == 'system_logs' || $page == 'user_roles') ? TRUE : FALSE;
@@ -55,9 +39,9 @@
                     <?php
                     }
                     if (in_array("addRequisition", $user_permissions)) { ?><button onclick="showModal('index.php?modal=requisitions/add&reroute=<?php echo $crypt->encode('page=' . $_GET['page']) ?>', 'large');return false" class="dropdown-item">New Requisition</button><?php }
-                    if (in_array("addRFP", $user_permissions)) { ?><button onclick="showModal('index.php?modal=proposals/add_rfp&reroute=<?php echo $crypt->encode('page=' . $_GET['page']) ?>', 'large');return false" class="dropdown-item">Request for proposal</button><?php }
-                    
-                    ?>
+                                                                                                                                                                                                                                                                            if (in_array("addRFP", $user_permissions)) { ?><button onclick="showModal('index.php?modal=proposals/add_rfp&reroute=<?php echo $crypt->encode('page=' . $_GET['page']) ?>', 'large');return false" class="dropdown-item">Request for proposal</button><?php }
+
+                                                                                                                                                                                                                                                                            ?>
                 </div>
             </li>
             <li class="nav-item d-flex nav-profile dropdown ml-1">

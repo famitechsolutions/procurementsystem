@@ -28,7 +28,7 @@
                                     if ($rfps) {
                                     ?>
                                         <div class="datatable-dashv1-list custom-datatable-overright">
-                                            <table class="table table-bordered" id="table">
+                                            <table id="table" class="table table-bordered" data-toggle="table" data-pagination="true" data-search="true" data-show-columns="true" data-show-pagination-switch="true" data-key-events="true" data-show-toggle="true" data-resizable="true" data-cookie="true" data-cookie-id-table="saveId" data-show-export="true" data-click-to-select="true" data-toolbar="#toolbar">
                                                 <thead>
                                                     <tr>
                                                         <th>Open Date</th>
@@ -41,7 +41,7 @@
                                                 <tbody>
                                                     <?php foreach ($rfps as $rfp) { ?>
                                                         <tr style="position: relative;">
-                                                            <td><a class="stretched-link" href="?page=<?php echo $crypt->encode('rfp').'&id='.$crypt->encode($rfp->id)?>"></a><?php echo $rfp->open_date?></td>
+                                                            <td><a class="stretched-link-" href="?page=<?php echo $crypt->encode('rfp').'&id='.$crypt->encode($rfp->id)?>"><?php echo $rfp->open_date?></a></td>
                                                             <td><?php echo $rfp->close_date?></td>
                                                             <td><?php echo $rfp->expected_delivery_date?></td>
                                                             <td><?php echo $rfp->expected_attachments?></td>

@@ -24,7 +24,7 @@
                                 $rfp = DB::getInstance()->querySample("SELECT *, (CASE WHEN rfp_status='Open' AND close_date<='$date_today' THEN 'Closed' ELSE r.rfp_status END)rfp_status, (CASE WHEN rfp_status='Closed' OR close_date<='$date_today' THEN 1 ELSE 0 END) is_closed FROM rfp r WHERE r.id='$id' AND status=1")[0];
                                 if ($rfp) {
                                     $filterCondition=$userInfo->category=='Supplier'?" AND ca.user_id='$user_id'":"";
-                                    $proposalsList = DB::getInstance()->querySample("SELECT u.*,CONCAT(u.fname,' ',u.lname) full_name,ca.* FROM contract_application ca, user u WHERE ca.user_id=u.id AND ca.rfp_id='$id' $filterCondition AND ca.status=1");
+                                    $proposalsList = DB::getInstance()->querySample("SELECT u.*,CONCAT(u.fname,' ',u.lname) full_name,ca.* FROM contract_application ca, user u WHERE ca.user_id=u.id AND ca.rfp_id='$id' $filterCondition AND ca.status=1 ORDER BY ca.application_status");
                                     $rfpFiles = DB::getInstance()->querySample("SELECT * FROM attachment WHERE rfp_id='$id' AND status=1");
                                     $itemsList = DB::getInstance()->querySample("SELECT * FROM rfp_item ri,item i WHERE i.id=ri.item_id AND ri.rfp_id='$id' AND ri.status=1");
                                 ?>

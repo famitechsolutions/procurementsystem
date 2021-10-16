@@ -64,6 +64,12 @@ if (isset($_POST['action'])) {
                 $dept_id = DB::getInstance()->insert('department', array('name' => $department_name));
             }
             break;
+        case 'addItem':
+            $name = Input::get("name");
+            if (!DB::getInstance()->checkRows("SELECT id FROM item WHERE name='$name' AND status=1")) {
+                $Sid = DB::getInstance()->insert('item', array('name' => $name));
+            }
+            break;
 
         case 'addUser':
             $email = Input::get("email");
@@ -467,6 +473,12 @@ if (isset($_POST['action'])) {
             DB::getInstance()->update("contract_application", $proposal_id, $contract, 'id');
             $status = 'success';
             $message = 'Proposal approved';
+            $rfp = DB::getInstance()->querySample("SELECT u.*,r.*,ca.* FROm user u,rfp r,contract_application ca WHERE ca.user_id=u.id AND ca.rfp_id=r.id AND ca.id='$proposal_id'")[0];
+            $template = DB::getInstance()->getRow("notificationtemplate", "request_for_proposal_approval", "subject,message", "code");
+            $search = array('{names}', '{contract_title}', '{start_date}', '{end_date}', '{company}');
+            $body_replace = array($rfp->fname . ' ' . $rfp->lname, $rfp->contract_title, $rfp->start_date, $rfp->end_date, $COMPANY_NAME);
+            $msg = str_replace($search, $body_replace, $template->message);
+            sendEmail($rfp->email, $rfp->fname . ' ' . $rfp->lname, $template->subject, $msg);
             break;
         case 'createBid':
             $files = $_FILES;
