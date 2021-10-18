@@ -143,7 +143,7 @@
                                                     <!-- <div class="card-title">LPOs generated</div> -->
                                                     <div class="panel-group accordion accordion-solid-header" id="accordion3" role="tablist">
                                                         <?php
-                                                        $lposList = DB::getInstance()->querySample("SELECT l.* FROM purchase_order l WHERE l.requisition_id='$id' AND l.status=1");
+                                                        $lposList = DB::getInstance()->querySample("SELECT l.*, CONCAT(u.fname,' ',u.lname)supplier FROM purchase_order l LEFT JOIN user u ON(u.id=l.supplier) WHERE l.requisition_id='$id' AND l.status=1");
                                                         if (empty($lposList)) {
                                                             echo '<div class="alert alert-info m-3">No LPOs generated</div>';
                                                         }
@@ -156,7 +156,7 @@
                                                             <div class="card" role="tab" id="lpo-item-<?php echo $lpo->id ?>">
                                                                 <div class="card-header">
                                                                     <h6 class="mb-0">
-                                                                        <a class="accordion-toggle accordion-toggle-styled <?php echo $expanded ? '' : 'collapsed' ?>" data-toggle="collapse" aria-expanded="<?php echo $expanded ? 'true' : 'false' ?>" data-parent="#accordion3" href="#collapse-<?php echo $lpo->id ?>"><i class='fa fa-check'></i> Serial No. <?php echo $lpo->serial_number; ?> </a>
+                                                                        <a class="accordion-toggle accordion-toggle-styled <?php echo $expanded ? '' : 'collapsed' ?>" data-toggle="collapse" aria-expanded="<?php echo $expanded ? 'true' : 'false' ?>" data-parent="#accordion3" href="#collapse-<?php echo $lpo->id ?>"><i class='fa fa-check'></i> Serial No. <?php echo $lpo->order_number; ?> </a>
                                                                     </h6>
                                                                 </div>
                                                                 <div id="collapse-<?php echo $lpo->id ?>" class=" <?php echo $expanded ? 'show' : 'collapse' ?>" aria-labelledby="lpo-item-<?php echo $lpo->id ?>">
@@ -187,22 +187,19 @@
                                                                                     <table class="table-" style="width: 100%;">
                                                                                         <tr>
                                                                                             <td><strong>Serial No. </strong></td>
-                                                                                            <td><?php echo $lpo->serial_number ?></td>
+                                                                                            <td><?php echo $lpo->order_number ?></td>
                                                                                             <td><strong>Delivery Date: </strong></td>
                                                                                             <td><?php echo $lpo->delivery_date ?></td>
                                                                                         </tr>
                                                                                         <tr>
                                                                                             <td><strong>Vendors Name & Address</strong></td>
-                                                                                            <td><?php echo $lpo->vendor_details ?></td>
+                                                                                            <td><?php echo $lpo->supplier ?></td>
                                                                                             <td><strong>Terms of Payment: </strong></td>
-                                                                                            <td><?php echo $lpo->payment_terms ?></td>
+                                                                                            <td><?php echo $lpo->payment_mode ?></td>
                                                                                         </tr>
                                                                                         <tr>
-
-                                                                                            <td><strong>Delivery Point: </strong></td>
-                                                                                            <td><?php echo $lpo->delivery_point ?></td>
                                                                                             <td><strong>Order Date: </strong></td>
-                                                                                            <td><?php echo $lpo->order_date ?></td>
+                                                                                            <td><?php echo $lpo->date ?></td>
                                                                                             <td></td>
                                                                                         </tr>
                                                                                     </table>
@@ -221,24 +218,19 @@
                                                                                             <?php
                                                                                             $lpoValue = 0 + $lpo->tax;
                                                                                             foreach ($itemsList as $i => $item) {
-                                                                                                $item->quantity_requested = ($request->requisition_status == 'Requested') ? $item->quantity_requested : $item->quantity_approved;
-                                                                                                $lpoValue += ($item->quantity_requested * $item->unit_price);
+                                                                                                $lpoValue += ($item->quantity * $item->unit_price);
                                                                                             ?>
                                                                                                 <tr>
                                                                                                     <td><?php echo ($i + 1) ?></td>
                                                                                                     <td><?php echo $item->name ?></td>
                                                                                                     <td><?php echo $item->unit_measure ?></td>
-                                                                                                    <td><?php echo $item->quantity_requested ?></td>
+                                                                                                    <td><?php echo $item->quantity ?></td>
                                                                                                     <td><?php echo $item->unit_price ?></td>
-                                                                                                    <td><?php echo $item->quantity_requested * $item->unit_price ?></td>
+                                                                                                    <td><?php echo $item->quantity * $item->unit_price ?></td>
                                                                                                 </tr>
                                                                                             <?php } ?>
                                                                                         </tbody>
                                                                                         <tfoot>
-                                                                                            <tr>
-                                                                                                <td colspan="5">Tax</td>
-                                                                                                <td><?php echo $lpo->tax ?></td>
-                                                                                            </tr>
                                                                                             <tr>
                                                                                                 <th colspan="5">Total Value</th>
                                                                                                 <th><?php echo formatMoney($lpoValue) ?></th>

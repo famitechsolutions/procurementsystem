@@ -387,6 +387,7 @@ $(function () {
         }
 
     };
+    //itemsObject
 
     var data = [], licenseChartData = [], bgColors = [], labels = [];
     for (var i = 0; i < assetsObject.length; i++) {

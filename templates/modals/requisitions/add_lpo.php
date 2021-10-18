@@ -31,12 +31,12 @@ $request = DB::getInstance()->querySample("SELECT r.* FROM requisition r WHERE r
                 <input class="form-control" name="order_number" value="<?php echo $request->next_lpo_number?>">
             </div>
             <div class="col-md-2">
-                <label>Delivery Date</label>
-                <input class="form-control" type="date" name="delivery_date">
-            </div>
-            <div class="col-md-2">
                 <label>Order Date</label>
                 <input type="date" class="form-control" name="order_date">
+            </div>
+            <div class="col-md-2">
+                <label>Delivery Date</label>
+                <input class="form-control" type="date" name="delivery_date">
             </div>
             <div class="col-md-2">
                 <label>Payment Mode</label>

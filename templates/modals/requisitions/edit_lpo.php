@@ -32,12 +32,12 @@ $lpo= DB::getInstance()->getRow("purchase_order",$lpo_id,"*","id");
                 <input class="form-control" name="order_number" value="<?php echo $lpo->order_number?>">
             </div>
             <div class="col-md-2">
-                <label>Delivery Date</label>
-                <input class="form-control" type="date" name="delivery_date" value="<?php echo $lpo->delivery_date?>">
-            </div>
-            <div class="col-md-2">
                 <label>Order Date</label>
                 <input type="date" class="form-control" name="order_date" value="<?php echo $lpo->date?>">
+            </div>
+            <div class="col-md-2">
+                <label>Delivery Date</label>
+                <input class="form-control" type="date" name="delivery_date" value="<?php echo $lpo->delivery_date?>">
             </div>
             <div class="col-md-2">
                 <label>Payment Mode</label>
@@ -64,7 +64,7 @@ $lpo= DB::getInstance()->getRow("purchase_order",$lpo_id,"*","id");
                     $lpoValue+=$item->quantity * $item->unit_price;
                     ?>
                     <tr>
-                        <td><label><?php if($item->lpo_id==''){?><input type="checkbox" name="item_id[]" class="lpo-item" data-amount="<?php echo $item->quantity_requested * $item->unit_price ?>" value="<?php echo $item->id?>" onchange="calculateLPOAsmount('.lpo-item','#general_total')"> <?php }echo DB::getInstance()->getName('item', $item->item_id, 'name', 'id') ?></label></td>
+                        <td><label><?php if($item->lpo_id==''){?><input type="checkbox" name="item_id[]" class="lpo-item" data-amount="<?php echo $item->quantity * $item->unit_price ?>" value="<?php echo $item->id?>" onchange="calculateLPOAsmount('.lpo-item','#general_total')"> <?php }echo DB::getInstance()->getName('item', $item->item_id, 'name', 'id') ?></label></td>
                         <td><?php echo $item->unit_measure ?></td>
                         <td><?php echo $item->quantity ?></td>
                         <td><?php echo $item->unit_price ?></td>

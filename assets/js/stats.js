@@ -8,71 +8,81 @@ $(function () {
      * -------
      * Data and config for chartjs
      */
+
+    var reqData = [], lpoData = [], bgColors1 = [], bgColors2 = [], labels = [];
+    try {
+        for (var i = 0; i < itemsObject.length; i++) {
+            reqData.push(itemsObject[i].total_requisitions);
+            bgColors1.push('rgba(39, 23, 201, 1)');
+            lpoData.push(itemsObject[i].total_lpos);
+            bgColors2.push('rgb(255,131,0)');
+            labels.push(itemsObject[i].name);
+        }
+    } catch (ex) {
+
+    }
+
     'use strict';
     var data = {
-        labels: ["1993", "1998", "2003", "2008", "2013"],
+        labels: labels,
         datasets: [{
-                label: 'Income',
-                data: [6000, 2300, 4200, 4800, 6000],
-                backgroundColor: [
-                    'rgba(39, 23, 201, 1)',
-                    'rgba(39, 23, 201, 1)',
-                    'rgba(39, 23, 201, 1)',
-                    'rgba(39, 23, 201, 1)',
-                    'rgba(39, 23, 201, 1)',
-                ],
-                borderColor: [
-                    'rgba(39, 23, 201, 1)',
-                    'rgba(39, 23, 201, 1)',
-                    'rgba(39, 23, 201, 1)',
-                    'rgba(39, 23, 201, 1)',
-                    'rgba(39, 23, 201, 1)',
-                ],
-                borderWidth: 1,
-                fill: false
-            },
-            {
-                label: 'Expence',
-                data: [4500, 3500, 4700, 3700, 4000],
-                backgroundColor: [
-                    'rgba(92, 59, 196, 0.32)',
-                    'rgba(92, 59, 196, 0.32)',
-                    'rgba(92, 59, 196, 0.32)',
-                    'rgba(92, 59, 196, 0.32)',
-                    'rgba(92, 59, 196, 0.32)',
-                ],
-                borderColor: [
-                    'rgba(92, 59, 196, 0.32)',
-                    'rgba(92, 59, 196, 0.32)',
-                    'rgba(92, 59, 196, 0.32)',
-                    'rgba(92, 59, 196, 0.32)',
-                    'rgba(92, 59, 196, 0.32)',
-                ],
-                borderWidth: 1,
-                fill: false
-            }]
+            label: 'Requisitions',
+            data: reqData,
+            backgroundColor: bgColors1,
+            borderColor: bgColors1,
+            borderWidth: 1,
+            fill: false
+        },{
+            label: 'LPOs',
+            data: lpoData,
+            backgroundColor: bgColors2,
+            borderColor: bgColors2,
+            borderWidth: 1,
+            fill: false
+        },
+        // {
+        //     label: 'Expence',
+        //     data: [4500, 3500, 4700, 3700, 4000],
+        //     backgroundColor: [
+        //         'rgba(92, 59, 196, 0.32)',
+        //         'rgba(92, 59, 196, 0.32)',
+        //         'rgba(92, 59, 196, 0.32)',
+        //         'rgba(92, 59, 196, 0.32)',
+        //         'rgba(92, 59, 196, 0.32)',
+        //     ],
+        //     borderColor: [
+        //         'rgba(92, 59, 196, 0.32)',
+        //         'rgba(92, 59, 196, 0.32)',
+        //         'rgba(92, 59, 196, 0.32)',
+        //         'rgba(92, 59, 196, 0.32)',
+        //         'rgba(92, 59, 196, 0.32)',
+        //     ],
+        //     borderWidth: 1,
+        //     fill: false
+        // }
+        ]
     };
     var options = {
         scales: {
             yAxes: [{
-                    ticks: {
-                        beginAtZero: true
-                    },
-                    gridLines: {
-                        drawBorder: false,
-                        display: true,
-                        color: "rgba(135, 150, 165, 0.15)",
-                    },
-                }],
+                ticks: {
+                    beginAtZero: true
+                },
+                gridLines: {
+                    drawBorder: false,
+                    display: true,
+                    color: "rgba(135, 150, 165, 0.15)",
+                },
+            }],
             xAxes: [{
-                    ticks: {
-                        beginAtZero: true
-                    },
-                    gridLines: {
-                        drawBorder: false,
-                        display: false,
-                    },
-                }]
+                ticks: {
+                    beginAtZero: true
+                },
+                gridLines: {
+                    drawBorder: false,
+                    display: false,
+                },
+            }]
         },
         legend: {
             display: false
@@ -95,427 +105,8 @@ $(function () {
 
     };
 
-    var overallChartData = {
-        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "nov", "dec"],
-        datasets: [{
-                label: 'first label',
-                data: [20, 30, 20, 35, 25, 30, 25, 30, 25, 20, 27, 22],
-                backgroundColor: [
-                    'rgba(254, 181, 104, 1)',
-                ],
-                borderColor: [
-                    'rgba(254, 181, 104, 1)',
-                ],
-                borderWidth: 4,
-                fill: true,
-                pointBorderWidth: 0,
-                pointRadius: [0, 0, 0, 0, 0],
-                pointHoverRadius: [0, 0, 0, 0, 0],
-
-            },
-            {
-                label: 'second label',
-                data: [30, 40, 30, 40, 35, 40, 28, 40, 35, 37, 32, 39],
-                backgroundColor: [
-                    'rgba(242,18,94, 1)',
-                ],
-                borderColor: [
-                    'rgba(242,18,94, 1)',
-                ],
-                borderWidth: 4,
-                fill: true,
-                pointBorderWidth: 0,
-                pointRadius: [0, 0, 0, 0, 0],
-                pointHoverRadius: [0, 0, 0, 0, 0],
-
-            },
-            {
-                label: 'third label',
-                data: [40, 45, 40, 45, 37, 50, 45, 50, 40, 43, 38, 48],
-                borderColor: [
-                    'rgba(39,23,201,1)',
-                ],
-                backgroundColor: [
-                    'rgba(39,23,201,1)',
-                ],
-                borderWidth: 4,
-                fill: true,
-                pointBorderWidth: 4,
-                pointRadius: [0, 0, 0, 0, 0],
-                pointHoverRadius: [0, 0, 0, 0, 0],
-            }
-        ],
-    };
-
-    var overallChartOptions = {
-        scales: {
-            yAxes: [{
-                    display: false
-                }],
-            xAxes: [{
-                    display: false,
-                    position: 'bottom',
-                    gridLines: {
-                        drawBorder: false,
-                        display: false,
-                    },
-                    ticks: {
-                        beginAtZero: false,
-                        stepSize: 0
-                    }
-                }],
-
-        },
-        legend: {
-            display: false,
-        },
-        elements: {
-            point: {
-                radius: 0
-            },
-            line: {
-                tension: 0.000001
-            }
-        },
-        tooltips: {
-            backgroundColor: 'rgba(2, 171, 254, 1)',
-        }
-    };
-
-    var detailedReportData = {
-        labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "sep"],
-        datasets: [{
-                label: 'first label',
-                data: [30, 20, 25, 30, 31, 20, 25, 18, 28],
-                backgroundColor: [
-                    'rgba(10,207,151, .2)',
-                ],
-                borderColor: [
-                    'rgba(10,207,151, 1)',
-                ],
-                borderWidth: 2,
-                fill: true,
-                pointBorderWidth: 0,
-                pointRadius: [0, 0, 0, 0, 0],
-                pointHoverRadius: [0, 0, 0, 0, 0],
-
-            },
-        ],
-    };
-
-    var detailedReportOptions = {
-        scales: {
-            yAxes: [{
-                    display: false
-                }],
-            xAxes: [{
-                    display: false,
-                    position: 'bottom',
-                    gridLines: {
-                        drawBorder: false,
-                        display: false,
-                    },
-                    ticks: {
-                        beginAtZero: false,
-                        stepSize: 0
-                    }
-                }],
-        },
-        legend: {
-            display: false,
-        },
-        elements: {
-            point: {
-                radius: 0
-            },
-        },
-        tooltips: {
-            backgroundColor: 'rgba(2, 171, 254, 1)',
-        }
-    };
-    var barChartStackedData = {
-        labels: ["jan", "feb", "mar", "apr", "may"],
-        datasets: [{
-                label: 'Safari',
-                data: [10, 20, 15, 30, 20],
-                backgroundColor: [
-                    'rgba(39, 23, 201, 1)',
-                    'rgba(39, 23, 201, 1)',
-                    'rgba(39, 23, 201, 1)',
-                    'rgba(39, 23, 201, 1)',
-                    'rgba(39, 23, 201, 1)',
-                ],
-                borderColor: [
-                    'rgba(39, 23, 201, 1)',
-                    'rgba(39, 23, 201, 1)',
-                    'rgba(39, 23, 201, 1)',
-                    'rgba(39, 23, 201, 1)',
-                    'rgba(39, 23, 201, 1)',
-                ],
-                borderWidth: 1,
-                fill: false
-            },
-            {
-                label: 'Chrome',
-                data: [5, 25, 10, 20, 30],
-                backgroundColor: [
-                    'rgba(235,235,235)',
-                    'rgba(235,235,235)',
-                    'rgba(235,235,235)',
-                    'rgba(235,235,235)',
-                    'rgba(235,235,235)',
-                ],
-                borderColor: [
-                    'rgba(235,235,235)',
-                    'rgba(235,235,235)',
-                    'rgba(235,235,235)',
-                    'rgba(235,235,235)',
-                    'rgba(235,235,235)',
-                ],
-                borderWidth: 1,
-                fill: false
-            }]
-    };
-    var barChartStackedOptions = {
-        scales: {
-            xAxes: [{
-                    stacked: true,
-                    gridLines: {
-                        display: false //this will remove only the label
-                    },
-                }],
-            yAxes: [{
-                    stacked: true,
-                    display: false,
-                }]
-        },
-        legend: {
-            display: false,
-            position: "bottom"
-        },
-        legendCallback: function (chart) {
-            var text = [];
-            text.push('<div class="row">');
-            for (var i = 0; i < chart.data.datasets.length; i++) {
-                text.push('<div class="col-sm-5 mr-3 ml-3 ml-sm-0 mr-sm-0 pr-md-0 mt-3"><div class="row align-items-center"><div class="col-2"><span class="legend-label" style="background-color:' + chart.data.datasets[i].backgroundColor[i] + '"></span></div><div class="col-9"><p class="text-dark m-0">' + chart.data.datasets[i].label + '</p></div></div>');
-                text.push('</div>');
-            }
-            text.push('</div>');
-            return text.join("");
-        },
-        elements: {
-            point: {
-                radius: 0
-            }
-        }
-
-    };
-    var barChartStackedDarkData = {
-        labels: ["jan", "feb", "mar", "apr", "may"],
-        datasets: [{
-                label: 'Safari',
-                data: [10, 20, 15, 30, 20],
-                backgroundColor: [
-                    'rgba(39, 23, 201, 1)',
-                    'rgba(39, 23, 201, 1)',
-                    'rgba(39, 23, 201, 1)',
-                    'rgba(39, 23, 201, 1)',
-                    'rgba(39, 23, 201, 1)',
-                ],
-                borderColor: [
-                    'rgba(39, 23, 201, 1)',
-                    'rgba(39, 23, 201, 1)',
-                    'rgba(39, 23, 201, 1)',
-                    'rgba(39, 23, 201, 1)',
-                    'rgba(39, 23, 201, 1)',
-                ],
-                borderWidth: 1,
-                fill: false
-            },
-            {
-                label: 'Chrome',
-                data: [5, 25, 10, 20, 30],
-                backgroundColor: [
-                    'rgba(135,140,158)',
-                    'rgba(135,140,158)',
-                    'rgba(135,140,158)',
-                    'rgba(135,140,158)',
-                    'rgba(135,140,158)',
-                ],
-                borderColor: [
-                    'rgba(135,140,158)',
-                    'rgba(135,140,158)',
-                    'rgba(135,140,158)',
-                    'rgba(135,140,158)',
-                    'rgba(135,140,158)',
-                ],
-                borderWidth: 1,
-                fill: false
-            }]
-    };
-    var barChartStackedDarkOptions = {
-        scales: {
-            xAxes: [{
-                    stacked: true,
-                    gridLines: {
-                        display: false //this will remove only the label
-                    },
-                }],
-            yAxes: [{
-                    stacked: true,
-                    display: false,
-                }]
-        },
-        legend: {
-            display: false,
-            position: "bottom"
-        },
-        legendCallback: function (chart) {
-            var text = [];
-            text.push('<div class="row">');
-            for (var i = 0; i < chart.data.datasets.length; i++) {
-                text.push('<div class="col-sm-5 mr-3 ml-3 ml-sm-0 mr-sm-0 pr-md-0 mt-3"><div class="row align-items-center"><div class="col-2"><span class="legend-label" style="background-color:' + chart.data.datasets[i].backgroundColor[i] + '"></span></div><div class="col-9"><p class="text-dark m-0">' + chart.data.datasets[i].label + '</p></div></div>');
-                text.push('</div>');
-            }
-            text.push('</div>');
-            return text.join("");
-        },
-        elements: {
-            point: {
-                radius: 0
-            }
-        }
-
-    };
 
 
-    var data = [], licenseChartData = [], bgColors = [], labels = [];
-    try {
-        for (var i = 0; i < assetsObject.length; i++) {
-            data.push(assetsObject[i].totals);
-            bgColors.push(assetsObject[i].color);
-            labels.push(assetsObject[i].name);
-        }
-    } catch (ex) {
-    }
-
-    var assetsPieData = {
-        datasets: [{
-                data: data,
-                backgroundColor: bgColors
-            }],
-        labels: labels
-    };
-    var data = [], bgColors = [], labels = [];
-    try {
-        for (var i = 0; i < licensesObject.length; i++) {
-            data.push(licensesObject[i].totals);
-            bgColors.push(licensesObject[i].color);
-            labels.push(licensesObject[i].name);
-        }
-    } catch (ex) {
-    }
-    var licencesPieData = {
-        datasets: [{
-                data: data,
-                backgroundColor: bgColors
-            }],
-        labels: labels
-    };
-    var leavesPieData = null;
-    try {
-        leavesPieData = {
-            datasets: [{
-                    data: [
-                        leavesObject.total_leave,
-                        leavesObject.pending_leave,
-                        leavesObject.reviewed_leave,
-                        leavesObject.approved_leave,
-                        leavesObject.rejected_leave
-                    ],
-                    backgroundColor: [
-                        returnColorCode(1),
-                        returnColorCode(10),
-                        returnColorCode(3),
-                        returnColorCode(8),
-                        returnColorCode(0)
-                    ]
-                }],
-            labels: ["Requested", "Pending", "Reviewed", "Approved", "Rejected"]
-        };
-    } catch (ex) {
-    }
-    var KPIPieChartData = [];
-    try {
-        KPIPieChartData['combined'] = {
-            datasets: [{
-                    data: [KPIsChartData.combined.internal_hire, KPIsChartData.combined.external_hire],
-                    backgroundColor: [
-                        returnColorCode(1),
-                        returnColorCode(8)
-                    ]
-                }],
-            labels: ["Internal Hires", "External Hires"]
-        };
-        KPIPieChartData['two'] = {
-            datasets: [{
-                    data: [KPIsChartData.two.internal_hire, KPIsChartData.two.external_hire],
-                    backgroundColor: [
-                        returnColorCode(1),
-                        returnColorCode(8)
-                    ]
-                }],
-            labels: ["Internal Hires", "External Hires"]
-        };
-        KPIPieChartData['three'] = {
-            datasets: [{
-                    data: [KPIsChartData.three.internal_hire, KPIsChartData.three.external_hire],
-                    backgroundColor: [
-                        returnColorCode(1),
-                        returnColorCode(8)
-                    ]
-                }],
-            labels: ["Internal Hires", "External Hires"]
-        };
-    } catch (ex) {
-    }
-
-
-    var appraisalFormsPieData = null;
-    try {
-        appraisalFormsPieData = {
-            datasets: [{
-                    data: [
-                        formsObject.all_forms,
-                        formsObject.appraiser_pending,
-                        formsObject.hr_pending,
-                        formsObject.partner_pending,
-                        formsObject.archived_forms
-                    ],
-                    backgroundColor: [
-                        returnColorCode(1),
-                        returnColorCode(0),
-                        returnColorCode(2),
-                        returnColorCode(3),
-                        returnColorCode(4),
-                    ]
-                }],
-            labels: ["All", "Appraiser Pending", "HR Pending", "Partner Pending", "Archived"]
-        };
-    } catch (ex) {
-    }
-
-    var doughnutPieOptions = {
-        responsive: true,
-        animation: {
-            animateScale: true,
-            animateRotate: true
-        }, legend: {
-            display: false,
-            position: "bottom"
-        },
-
-    };
     // Get context with jQuery - using jQuery's .get() method.
     if ($("#barChart").length) {
         var barChartCanvas = $("#barChart").get(0).getContext("2d");
@@ -526,22 +117,6 @@ $(function () {
             options: options
         });
         document.getElementById('chart-legendsBar').innerHTML = barChart.generateLegend();
-    }
-    if ($("#overallChart").length) {
-        var lineChartCanvas = $("#overallChart").get(0).getContext("2d");
-        var saleschart = new Chart(lineChartCanvas, {
-            type: 'line',
-            data: overallChartData,
-            options: overallChartOptions
-        });
-    }
-    if ($("#detailedReport").length) {
-        var lineChartCanvas = $("#detailedReport").get(0).getContext("2d");
-        var saleschart = new Chart(lineChartCanvas, {
-            type: 'line',
-            data: detailedReportData,
-            options: detailedReportOptions
-        });
     }
     if ($('#circleProgress1').length) {
         var bar = new ProgressBar.Circle(circleProgress1, {
@@ -603,76 +178,5 @@ $(function () {
 
         });
         bar.animate(.36); // Number from 0.0 to 1.0
-    }
-    if ($("#barChartStacked").length) {
-        var barChartCanvas = $("#barChartStacked").get(0).getContext("2d");
-        // This will get the first returned node in the jQuery collection.
-        var barChart = new Chart(barChartCanvas, {
-            type: 'bar',
-            data: barChartStackedData,
-            options: barChartStackedOptions
-        });
-    }
-    if ($("#barChartStackedDark").length) {
-        var barChartCanvas = $("#barChartStackedDark").get(0).getContext("2d");
-        // This will get the first returned node in the jQuery collection.
-        var barChart = new Chart(barChartCanvas, {
-            type: 'bar',
-            data: barChartStackedDarkData,
-            options: barChartStackedDarkOptions
-        });
-    }
-    if ($("#assetsCategory").length) {
-        var pieChartCanvas = $("#assetsCategory").get(0).getContext("2d");
-        var pieChart = new Chart(pieChartCanvas, {
-            type: 'doughnut',
-            data: assetsPieData,
-            options: doughnutPieOptions
-        });
-    }
-    if ($("#licenceCategory").length) {
-        var pieChartCanvas = $("#licenceCategory").get(0).getContext("2d");
-        var pieChart = new Chart(pieChartCanvas, {
-            type: 'doughnut',
-            data: licencesPieData,
-            options: doughnutPieOptions
-        });
-    }
-    if ($("#totalLeavesPieChart").length) {
-        var pieChartCanvas = $("#totalLeavesPieChart").get(0).getContext("2d");
-        var pieChart = new Chart(pieChartCanvas, {
-            type: 'pie',
-            data: leavesPieData,
-            options: doughnutPieOptions
-        });
-    }
-
-    if ($("#KPIsGraph1").length) {
-        var pieChartCanvas = $("#KPIsGraph1").get(0).getContext("2d");
-        var pieChart = new Chart(pieChartCanvas, {
-            type: 'pie',
-            data: KPIPieChartData['combined'],
-            options: doughnutPieOptions
-        });
-        var pieChartCanvas = $("#KPIsGraph2").get(0).getContext("2d");
-        var pieChart = new Chart(pieChartCanvas, {
-            type: 'pie',
-            data: KPIPieChartData['two'],
-            options: doughnutPieOptions
-        });
-        var pieChartCanvas = $("#KPIsGraph3").get(0).getContext("2d");
-        var pieChart = new Chart(pieChartCanvas, {
-            type: 'pie',
-            data: KPIPieChartData['three'],
-            options: doughnutPieOptions
-        });
-    }
-    if ($("#appraisalFormsPieChart").length) {
-        var pieChartCanvas = $("#appraisalFormsPieChart").get(0).getContext("2d");
-        var pieChart = new Chart(pieChartCanvas, {
-            type: 'pie',
-            data: appraisalFormsPieData,
-            options: doughnutPieOptions
-        });
     }
 });

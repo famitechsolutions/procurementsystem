@@ -27903,6 +27903,7 @@ div.tagsinput span.tag a {
     display: flex;
     -webkit-flex-direction: column;
     flex-direction: column;
+    padding-top: 60px;
 }
 
 @media (max-width: 991px) {
@@ -27919,7 +27920,7 @@ div.tagsinput span.tag a {
     width: 100%;
     -webkit-flex-grow: 1;
     flex-grow: 1;
-    margin-top: 60px;
+    /* margin-top: 60px; */
 }
 
 @media (max-width: 767px) {

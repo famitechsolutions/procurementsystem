@@ -31,10 +31,16 @@
                                     echo '<div class="alert alert-warning">User successfully deleted</div>';
                                     Redirect::go_to('index.php?page=' . $crypt->encode("users"));
                                 }
-                                $usersCheck = "SELECT u.*, d.name department_name FROM user u LEFT JOIN department d ON(d.id=u.department_id) WHERE u.status=1 AND u.is_verified=1 ORDER BY CONCAT(fname,lname)";
+                                $filterCondition='';
+                                if(isset($_GET['category'])){
+                                    $cat=$_GET['category'];
+                                    $filterCondition.=" AND u.category='$cat'";
+                                }
+                                $usersCheck = "SELECT u.*, d.name department_name FROM user u LEFT JOIN department d ON(d.id=u.department_id) WHERE u.status=1 $filterCondition AND u.is_verified=1 ORDER BY CONCAT(fname,lname)";
                                 $users_list = DB::getInstance()->querySample($usersCheck);
                                 if ($users_list) {
                                 ?>
+                                    <div class="table-responsive">
                                     <table id="table" class="table table-bordered" data-toggle="table" data-pagination="true" data-search="true" data-show-columns="true" data-show-pagination-switch="true" data-key-events="true" data-show-toggle="true" data-resizable="true" data-cookie="true" data-cookie-id-table="saveId" data-show-export="true" data-click-to-select="true" data-toolbar="#toolbar">
                                         <thead>
                                             <tr>
@@ -42,6 +48,7 @@
                                                 <th>Gender</th>
                                                 <th>Email Address</th>
                                                 <th>Role</th>
+                                                <th>Last Login</th>
                                                 <th>Department</th>
                                                 <th>Phone No.</th>
                                                 <th>DOB</th>
@@ -58,6 +65,7 @@
                                                     <td><?php echo $users->gender ?></td>
                                                     <td><?php echo $users->email ?></td>
                                                     <td><?php echo $users->category ?></td>
+                                                    <td><?php echo $users->last_login ?></td>
                                                     <td><?php echo $users->department_name ?></td>
                                                     <td><?php echo $users->phone ?></td>
                                                     <td><?php echo $users->dob ?></td>
@@ -70,6 +78,7 @@
                                             <?php endforeach; ?>
                                         </tbody>
                                     </table>
+                                    </div>
 
                                 <?php
                                 } else {
