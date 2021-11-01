@@ -11,8 +11,8 @@ $proposal_id = $_GET['proposal_id'];
     <label>Contract Title</label>
     <input class="form-control" name="contract[contract_title]" required />
 
-    <label>Contract Amount</label>
-    <input class="form-control" type="number" step="any" name="contract[contract_amount]" required min="0" />
+    <label>Contract Terms and conditions</label>
+    <textarea class="form-control" name="contract[contract_terms]"></textarea>
     <div class="row form-group">
         <div class="col">
             <label>Start Date</label>

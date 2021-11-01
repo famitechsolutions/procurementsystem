@@ -55,7 +55,7 @@
                                 <div class="row">
                                     <div class="col-md-6">
                                         <label>Phone Number</label>
-                                        <input type="phone" name="phone" class="form-control" required />
+                                        <input type="text" pattern="[0-9]{10}" title="Please enter a valid phone number 10 digits" name="phone" class="form-control" required />
                                     </div>
                                 </div>
                                 <div class="row">

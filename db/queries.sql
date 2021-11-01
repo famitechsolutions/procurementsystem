@@ -96,3 +96,15 @@ ALTER TABLE `purchase_order` CHANGE `supplier` `supplier` INT(11) NULL;
 
 ALTER TABLE `requisition_item` ADD `purchase_order_id` INT NULL AFTER `item_id`;
 
+
+ALTER TABLE `rfp` CHANGE `rfp_status` `rfp_status` VARCHAR(45) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT 'Pending';
+ALTER TABLE `contract_application` CHANGE `contract_amount` `contract_terms` TEXT NULL DEFAULT NULL;
+ALTER TABLE `item` ADD `unit_measure` VARCHAR(45) NULL DEFAULT NULL AFTER `status`, ADD `unit_price` DOUBLE NULL DEFAULT NULL AFTER `unit_measure`, ADD `supplier` INT NULL DEFAULT NULL AFTER `unit_price`;
+
+ALTER TABLE `requisition_item`
+  DROP `unit_price`,
+  DROP `unit_measure`;
+
+ALTER TABLE `contract_application` ADD `items` TEXT NULL DEFAULT NULL AFTER `application_response`;
+
+ALTER TABLE `purchase_order` ADD `lpo_status` VARCHAR(45) NOT NULL DEFAULT 'Open' AFTER `requisition_id`;

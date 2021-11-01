@@ -2,8 +2,8 @@
 $departmentsList = DB::getInstance()->querySample("SELECT * FROM department WHERE status=1 ORDER BY name");
 $id = $_GET['id'];
 $request = DB::getInstance()->querySample("SELECT r.* FROM requisition r WHERE r.id='$id'")[0];
-$requisitionItems = DB::getInstance()->querySample("SELECT * FROM requisition_item WHERE requisition_id='$id' AND status=1");
-$itemsList = DB::getInstance()->querySample("SELECT * FROM item WHERE status=1 ORDER BY name");
+$requisitionItems = DB::getInstance()->querySample("SELECT i.*,ri.* FROM requisition_item ri,item i WHERE i.id=ri.item_id AND ri.requisition_id='$id' AND ri.status=1");
+$itemsList = DB::getInstance()->querySample("SELECT * FROM item WHERE status=1 AND unit_price IS NOT NULL ORDER BY name");
 ?>
 
 <div class="modal-header">
@@ -39,9 +39,9 @@ $itemsList = DB::getInstance()->querySample("SELECT * FROM item WHERE status=1 O
             <thead>
                 <tr>
                     <th>Goods Description</th>
-                    <th>Quantity</th>
                     <th>Unit of Measure</th>
                     <th>Unit Price</th>
+                    <th>Quantity</th>
                     <th>Total Price</th>
                     <th><button type="button" class="btn btn-primary btn-xs" onclick="add_element('requisition');"><i class="fa fa-plus-circle"></i></button></th>
                 </tr>
@@ -51,17 +51,17 @@ $itemsList = DB::getInstance()->querySample("SELECT * FROM item WHERE status=1 O
                 foreach ($requisitionItems as $i => $requisitionItem) {
                 ?>
                     <tr>
-                        <td><select name="item[]" class="form-control" required>
+                        <td><select id="item_<?php echo $requisitionItem->id ?>" name="item[]" class="form-control" onchange="calculateTotal(<?php echo $requisitionItem->id ?>);" required>
                             <?php
                             foreach($itemsList AS $item){
                                 $selected=$requisitionItem->item_id==$item->id?' selected':'';
-                                echo '<option value="'.$item->id.'" '.$selected.'>'.$item->name.'</option>';
+                                echo '<option value="'.$item->id.'" '.$selected.' data-price="'.$item->unit_price.'" data-measure="'.$item->unit_measure.'">'.$item->name.': ('.$item->unit_measure.')</option>';
                             }
                             ?>
                         </select></td>
+                        <td><input id="measure_<?php echo $requisitionItem->id ?>" class="form-control" readonly value="<?php echo $requisitionItem->unit_measure ?>"></td>
+                        <td><input id="unit_price_<?php echo $requisitionItem->id ?>" class="form-control" readonly value="<?php echo $requisitionItem->unit_price ?>"></td>
                         <td><input type="number" id="quantity_<?php echo $requisitionItem->id ?>" oninput="calculateTotal(<?php echo $requisitionItem->id ?>);" min="0" step="0.01" class="form-control" name="quantity[]" value="<?php echo $requisitionItem->quantity ?>" required></td>
-                        <td><input type="text" name="unit_measure[]" class="form-control" value="<?php echo $requisitionItem->unit_measure ?>"></td>
-                        <td><input type="number" id="unit_price_<?php echo $requisitionItem->id ?>" oninput="calculateTotal(<?php echo $requisitionItem->id ?>);" min="0" class="form-control" name="unit_cost[]" value="<?php echo $requisitionItem->unit_price ?>"></td>
                         <td><input type="text" id="total_cost_<?php echo $requisitionItem->id ?>" class="form-control" name="total_cost[]" readonly value="<?php echo $requisitionItem->quantity * $requisitionItem->unit_price ?>"></td>
                         <td></td>
                     </tr>

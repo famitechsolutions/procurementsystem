@@ -23,6 +23,11 @@
                         <div class="col-md-12">
                             <div class="card">
                                 <?php
+                                if (isset($_GET['action'])&&$_GET['action']=='completeLPO'){
+                                    DB::getInstance()->update("purchase_order",$_GET['lpo_id'],array("lpo_status"=>"Complete"),'id');
+                                    Redirect::to("?page=".$_GET['page'].'&id='.$_GET['id'].'&tab=lpos-tab');
+
+                                }
                                 $request = DB::getInstance()->querySample("SELECT r.*,d.name department_name, CONCAT(fname,' ',lname) prepared_by,(SELECT CONCAT(fname,' ',lname) name FROM user WHERE id=r.approval_by LIMIT 1) approver FROM requisition r,department d,user u WHERE r.user_id=u.id AND r.department_id=d.id AND r.id='$id'")[0];
                                 $itemsList = DB::getInstance()->querySample("SELECT * FROM requisition_item ri,item i WHERE i.id=ri.item_id AND ri.requisition_id='$id' AND ri.status=1");
                                 $files = DB::getInstance()->querySample("SELECT * FROM attachment WHERE requisition_id='$id' AND status=1");
@@ -168,9 +173,12 @@
                                                                             <li class="nav-item"><a class="nav-link" href="#lpo-files-<?php echo $lpo->id ?>-tab" data-toggle="tab"><?php _e('Files'); ?></a></li>
 
                                                                             <div class="btn-group- pull-right" style="padding:6px;">
-                                                                                <?php if (in_array("editLPO", $user_permissions)) { ?><a data-toggle='tooltip' title='<?php _e('Edit LPO'); ?>' class="btn btn-default btn-xs" onClick='showModal("index.php?modal=requisitions/edit_lpo&reroute=<?php echo $crypt->encode('page=' . $_GET['page'] . '&id=' . $_GET['id'] . '&tab=lpos-tab') . '&id=' . $request->id . '&lpo_id=' . $lpo->id; ?>&tab=lpo-tab", "large");return false'>Edit</a><?php } ?>
+                                                                                <?php if($lpo->lpo_status!='Complete'){
+                                                                                    if (in_array("editLPO", $user_permissions)) { ?><a data-toggle='tooltip' title='<?php _e('Edit LPO'); ?>' class="btn btn-default btn-xs" onClick='showModal("index.php?modal=requisitions/edit_lpo&reroute=<?php echo $crypt->encode('page=' . $_GET['page'] . '&id=' . $_GET['id'] . '&tab=lpos-tab') . '&id=' . $request->id . '&lpo_id=' . $lpo->id; ?>&tab=lpo-tab", "large");return false'>Edit</a><?php } ?>
                                                                                 <?php if ($request->requisition_status == 'Approved') { ?><a data-toggle='tooltip' title='<?php _e('Upload File'); ?>' class="btn btn-default btn-xs" onClick='showModal("index.php?modal=files/upload&reroute=<?php echo $crypt->encode('page=' . $_GET['page'] . '&id=' . $_GET['id'] . '&tab=lpos-tab') . '&id=' . $request->id . '&lpo_id=' . $lpo->id . '&project_id=' . $request->project_id . '&client_id=' . $request->client_id; ?>&tab=lpos-tab");return false'>Upload File</a><?php } ?>
                                                                                 <?php if (in_array("deleteLPO", $user_permissions)) { ?><a data-toggle='tooltip' title='<?php _e('Delete LPO'); ?>' class="btn btn-default" onClick='showModal("index.php?modal=requisitions/delete_lpo&reroute=<?php echo $crypt->encode('page=' . $_GET['page'] . '&id=' . $_GET['id'] . '&tab=lpos-tab') . '&id=' . $request->id . '&lpo_id=' . $lpo->id; ?>&tab=lpo-tab");return false'><i class='fa fa-trash text-danger'></i></a><?php } ?>
+                                                                                <a href="?page=<?php echo $_GET['page'].'&id='.$_GET['id'].'&action=completeLPO&lpo_id='.$lpo->id?>" class="btn btn-xs btn-danger">Complete</a>
+                                                                                <?php }?>
                                                                                 <a data-toggle='tooltip' onclick="PrintSection('lpoSection<?php echo $lpo->id ?>', '21.0', '29.7')" title='<?php _e('Print LPO'); ?>' class="btn btn-default btn-xs">Print</a>
                                                                             </div>
 

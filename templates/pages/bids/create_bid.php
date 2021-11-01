@@ -25,6 +25,7 @@
                                 if ($rfp) {
                                     $attachments = explode(",", $rfp->expected_attachments);
                                     $questions = explode(",", $rfp->expected_response);
+                                    $rfpItems = DB::getInstance()->querySample("SELECT ri.*,i.* FROM item i, rfp_item ri WHERE ri.item_id=i.id AND ri.rfp_id='$id' AND i.status=1 GROUP BY i.id");
                                 ?>
                                     <div class="card-title">
                                         Request for proposal #<?php echo $rfp->id . ' <small class="ml-5">Deadline:</small><span class="btn btn-success btn-xs">' . $rfp->close_date . '</span>' ?>
@@ -34,6 +35,29 @@
                                             echo '<div class="alert alert-warning">Your Application already submitted on ' . $rfp->application_date . '</div>';
                                         } else { ?>
                                             <form method="POST" enctype="multipart/form-data">
+                                                <h4>Items List. Kindly check what you are capable of supplying and add the price list</h4>
+                                                <table class="table table-bordered">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>Item</th>
+                                                            <th>Unit Measure</th>
+                                                            <th>Description</th>
+                                                            <th>Your Price</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <?php
+                                                        foreach ($rfpItems as $item) { ?>
+                                                            <tr>
+                                                                <td><label><input type="checkbox" name="items[id][]" id="item_<?php echo $item->item_id ?>" value="<?php echo $item->item_id ?>" onchange="toggleProposalItem(this,'<?php echo $item->item_id ?>')" /> <?php echo $item->name ?></label></td>
+                                                                <td><?php echo $item->unit_measure ?></td>
+                                                                <td><?php echo $item->description ?></td>
+                                                                <td><input type="number" disabled id="price_<?php echo $item->item_id ?>" step="any" class="form-control" name="items[price][]" required/></td>
+                                                            </tr>
+                                                        <?php }
+                                                        ?>
+                                                    </tbody>
+                                                </table>
                                                 <?php if (!empty($questions)) {
                                                     foreach ($questions as $question) { ?>
                                                         <label><?php echo $question ?></label>
@@ -56,7 +80,7 @@
                                                 <?php } ?>
                                                 <input type="hidden" name="action" value="createBid">
                                                 <input type="hidden" name="rfp_id" value="<?php echo $id ?>">
-                                                <input type="hidden" name="reroute" value="<?php echo $crypt->encode('page=' . $crypt->encode('rfp') . '&id='.$crypt->encode($id).'&tab=proposals-tab'); ?>">
+                                                <input type="hidden" name="reroute" value="<?php echo $crypt->encode('page=' . $crypt->encode('rfp') . '&id=' . $crypt->encode($id) . '&tab=proposals-tab'); ?>">
                                                 <button type="submit" class="btn btn-primary">Save</button>
                                             </form>
                                         <?php } ?>
@@ -80,5 +104,16 @@
     <!-- container-scroller -->
     <?php require_once 'includes/footer.php'; ?>
 </body>
+<script>
+    function toggleProposalItem(el, id) {
+        if (el.checked) {
+            $("#price_" + id).removeAttr('disabled');
+        } else {
+            $("#price_" + id).attr({
+                'disabled': true
+            })
+        }
+    }
+</script>
 
 </html>

@@ -23,6 +23,11 @@ $user_id = $_SESSION['system_user_id'];
             </a>
         </li>
         <?php }?>
+        <li class="nav-item <?php echo ($page == 'lpos') ? 'active' : '' ?>">
+            <a class="nav-link" href="index.php?page=<?php echo $crypt->encode('lpos') ?>">
+                <i class="fa fa-bars menu-icon"></i> <span class="menu-title">LPOs</span>
+            </a>
+        </li>
         <li class="nav-item <?php echo ($page == 'rfps') ? 'active' : '' ?>">
             <a class="nav-link" href="index.php?page=<?php echo $crypt->encode('rfps') ?>">
                 <i class="fa fa-bars menu-icon"></i> <span class="menu-title">Request for proposals</span>

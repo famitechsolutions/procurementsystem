@@ -13,17 +13,13 @@ $request = DB::getInstance()->querySample("SELECT r.* FROM requisition r WHERE r
         <div class="row">
             <div class="col-sm-6">
                 <div class="form-group row">
-                    <div class="col-sm-4">
+                    <div class="col">
                         <label>Open Date </label>
                         <input type="date" class="form-control" name="rfp[open_date]" min="<?php echo $date_today ?>" required>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col">
                         <label>Close Date </label>
                         <input type="date" class="form-control" name="rfp[close_date]" min="<?php echo $date_today ?>" required>
-                    </div>
-                    <div class="col-sm-4">
-                        <label>Desired delivery date </label>
-                        <input type="date" class="form-control" name="rfp[expected_delivery_date]" min="<?php echo $date_today ?>" required>
                     </div>
                 </div>
                 <label>Purpose statement</label>
@@ -33,7 +29,7 @@ $request = DB::getInstance()->querySample("SELECT r.* FROM requisition r WHERE r
                     <textarea class="form-control" name="rfp[expected_attachments]"></textarea>
                 </div>
                 <div class="">
-                    <label>Expected question response [<small>Add title names comma separated</small>]</label>
+                    <label>Expected question [<small>Add title names comma separated</small>]</label>
                     <textarea class="form-control" name="rfp[expected_response]"></textarea>
                 </div>
                 <div class="">
@@ -47,7 +43,6 @@ $request = DB::getInstance()->querySample("SELECT r.* FROM requisition r WHERE r
                         <tr>
                             <th>Goods Description [Check to include]</th>
                             <th>Description</th>
-                            <th>Quantity</th>
                         </tr>
                     </thead>
                     <tbody id="requisition_div">
@@ -56,7 +51,6 @@ $request = DB::getInstance()->querySample("SELECT r.* FROM requisition r WHERE r
                             <tr>
                                 <td><label><input type="checkbox" name="item_id[]" class="lpo-item" data-amount="<?php echo $item->quantity * $item->unit_price ?>" value="<?php echo $item->id ?>">     <?php echo $item->name ?></label></td>
                                 <td><textarea type="text" class="form-control" name="description[<?php echo $item->id?>]"></textarea></td>
-                                <td><input type="number" min="0" step="any" class="form-control" name="quantity[<?php echo $item->id?>]"></td>
                             </tr>
                         <?php } ?>
                     </tbody>

@@ -112,21 +112,9 @@
                                         <div class="widget-thumb-body">
                                             <span class="widget-thumb-subtitle">
                                                 Total: <span class="value"><?php echo $proposals->total; ?></span>
-                                                <?php if (in_array("viewRequisition", $user_permissions)) { ?>
-                                                    <a href="index.php?page=<?php echo $crypt->encode("requisition") ?>">View all <i class="fa fa-angle-double-right"></i></a>
-                                                <?php } ?>
-                                            </span>
-                                            <hr />
-                                            <span class="widget-thumb-subtitle">Pending Approval: <span class="value"><?php echo $proposals->pending; ?></span>
-                                                <?php if (in_array("viewRequisition", $user_permissions)) { ?>
-                                                    <a href="index.php?page=<?php echo $crypt->encode('requisition'); ?>">view all <i class="fa fa-angle-double-right"></i></a>
-                                                <?php } ?>
                                             </span>
                                             <hr />
                                             <span class="widget-thumb-subtitle">Rejected: <span class="value"><?php echo $proposals->rejected; ?></span>
-                                                <?php if (in_array("viewRequisition", $user_permissions)) { ?>
-                                                    <a href="index.php?page=<?php echo $crypt->encode("requisition") . '&requisition_status=Rejected' ?>">View all <i class="fa fa-angle-double-right"></i></a>
-                                                <?php } ?>
                                             </span>
                                         </div>
                                     </div>

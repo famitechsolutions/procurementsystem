@@ -67,8 +67,16 @@ if (isset($_POST['action'])) {
         case 'addItem':
             $name = Input::get("name");
             if (!DB::getInstance()->checkRows("SELECT id FROM item WHERE name='$name' AND status=1")) {
-                $Sid = DB::getInstance()->insert('item', array('name' => $name));
+                $id = DB::getInstance()->insert('item', array('name' => $name, 'unit_measure' => $data['unit_measure']));
             }
+            break;
+        case 'editItem':
+            $arr = array('name' => $data['name'], 'unit_measure' => $data['unit_measure']);
+            if ($data['remove_supplier']) {
+                $arr['supplier'] = null;
+                $arr['unit_price'] = null;
+            }
+            DB::getInstance()->update('item', $data['id'], $arr, 'id');
             break;
 
         case 'addUser':
@@ -282,8 +290,6 @@ if (isset($_POST['action'])) {
                         DB::getInstance()->insert('requisition_item', [
                             'item_id' => $item,
                             'quantity' => ($data['quantity'][$i]) ? $data['quantity'][$i] : 0,
-                            'unit_measure' => $data['unit_measure'][$i],
-                            'unit_price' => ($data['unit_cost'][$i]) ? $data['unit_cost'][$i] : 0,
                             'requisition_id' => $id,
                         ]);
                     }
@@ -331,8 +337,6 @@ if (isset($_POST['action'])) {
                     DB::getInstance()->insert('requisition_item', [
                         'item_id' => $item,
                         'quantity' => ($data['quantity'][$i]) ? $data['quantity'][$i] : 0,
-                        'unit_measure' => $data['unit_measure'][$i],
-                        'unit_price' => ($data['unit_cost'][$i]) ? $data['unit_cost'][$i] : 0,
                         'requisition_id' => $data['id'],
                     ]);
                 }
@@ -362,7 +366,7 @@ if (isset($_POST['action'])) {
                 $lpo_id = DB::getInstance()->insert('purchase_order', [
                     'delivery_date' => ($data['delivery_date']) ? $data['delivery_date'] : NULL,
                     'order_number' => ($data['order_number']) ? $data['order_number'] : $unique_number,
-                    'supplier' => ($data['supplier'])?$data['supplier']:NULL,
+                    'supplier' => ($data['supplier']) ? $data['supplier'] : NULL,
                     'payment_mode' => $data['payment_mode'],
                     'requisition_id' => ($data['requisition_id']) ? $data['requisition_id'] : 0,
                     'date' => ($data['order_date']) ? $data['order_date'] : NULL,
@@ -384,14 +388,14 @@ if (isset($_POST['action'])) {
         case 'editLPO':
             if ($data['lpo_amount'] > 0) {
                 $unique_number = date("Ymdhis");
-                DB::getInstance()->update('purchase_order', $data['lpo_id'], [                 
+                DB::getInstance()->update('purchase_order', $data['lpo_id'], [
                     'delivery_date' => ($data['delivery_date']) ? $data['delivery_date'] : NULL,
                     'order_number' => ($data['order_number']) ? $data['order_number'] : $unique_number,
-                    'supplier' => ($data['supplier'])?$data['supplier']:NULL,
+                    'supplier' => ($data['supplier']) ? $data['supplier'] : NULL,
                     'payment_mode' => $data['payment_mode'],
                     'requisition_id' => ($data['requisition_id']) ? $data['requisition_id'] : 0,
                     'date' => ($data['order_date']) ? $data['order_date'] : NULL,
-                    
+
                 ], 'id');
                 $status = 'success';
                 $message = 'LPO updated successfully';
@@ -410,16 +414,15 @@ if (isset($_POST['action'])) {
             $rfp = $data['rfp'];
             $rfp['requisition_id'] = $data['requisition_id'] ? $data['requisition_id'] : null;
             $rfp['user_id'] = $user_id;
+            $rfp['rfp_status'] = 'Pending';
             $id = DB::getInstance()->insert('rfp', $rfp);
             if ($id) {
                 foreach ($data['item_id'] as $i => $item) {
                     if ($item) {
                         DB::getInstance()->insert('rfp_item', [
                             'item_id' => $item,
-                            'quantity' => ($data['quantity'][$item]) ? $data['quantity'][$item] : 0,
                             'rfp_id' => $id,
                             'description' => $data['description'][$item],
-                            'status' => 'Pending'
                         ]);
                     }
                 }
@@ -440,10 +443,8 @@ if (isset($_POST['action'])) {
                     if ($item) {
                         DB::getInstance()->insert('rfp_item', [
                             'item_id' => $item,
-                            'quantity' => ($data['quantity'][$item]) ? $data['quantity'][$item] : 0,
                             'rfp_id' => $id,
                             'description' => $data['description'][$item],
-                            'status' => 'Pending'
                         ]);
                     }
                 }
@@ -476,7 +477,14 @@ if (isset($_POST['action'])) {
             $search = array('{names}', '{contract_title}', '{start_date}', '{end_date}', '{company}');
             $body_replace = array($rfp->fname . ' ' . $rfp->lname, $rfp->contract_title, $rfp->start_date, $rfp->end_date, $COMPANY_NAME);
             $msg = str_replace($search, $body_replace, $template->message);
+            if($rfp->items){
+                $items = json_decode($rfp->items);
+                for ($i = 0; $i < count($items->id); $i++) {
+                    DB::getInstance()->update("item",$items->id[$i],array('unit_price'=>$items->price[$i],'supplier'=>$rfp->user_id),'id');
+                }
+            }
             sendEmail($rfp->email, $rfp->fname . ' ' . $rfp->lname, $template->subject, $msg);
+
             break;
         case 'createBid':
             $files = $_FILES;
@@ -486,6 +494,7 @@ if (isset($_POST['action'])) {
                     'rfp_id' => $data['rfp_id'],
                     'application_response' => json_encode($data['question']),
                     'application_date' => $date_today,
+                    'items'=>$data['items']?json_encode($data['items']):NULL,
                     'application_status' => 'Pending'
                 );
                 $id = DB::getInstance()->insert('contract_application', $arr);

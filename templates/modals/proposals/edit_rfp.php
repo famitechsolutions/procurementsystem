@@ -13,17 +13,13 @@ $rfp = DB::getInstance()->querySample("SELECT r.* FROM rfp r WHERE r.id='$id'")[
         <div class="row">
             <div class="col-sm-6">
                 <div class="form-group row">
-                    <div class="col-sm-4">
+                    <div class="col">
                         <label>Open Date </label>
                         <input type="date" class="form-control" name="rfp[open_date]" value="<?php echo $rfp->open_date?>" required>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col">
                         <label>Close Date </label>
                         <input type="date" class="form-control" name="rfp[close_date]" value="<?php echo $rfp->close_date?>" required>
-                    </div>
-                    <div class="col-sm-4">
-                        <label>Desired delivery date </label>
-                        <input type="date" class="form-control" name="rfp[expected_delivery_date]" value="<?php echo $rfp->expected_delivery_date?>" required>
                     </div>
                 </div>
                 <label>Purpose statement</label>
@@ -47,7 +43,6 @@ $rfp = DB::getInstance()->querySample("SELECT r.* FROM rfp r WHERE r.id='$id'")[
                         <tr>
                             <th>Goods Description [Check to include]</th>
                             <th>Description</th>
-                            <th>Quantity</th>
                         </tr>
                     </thead>
                     <tbody id="requisition_div">
@@ -56,7 +51,6 @@ $rfp = DB::getInstance()->querySample("SELECT r.* FROM rfp r WHERE r.id='$id'")[
                             <tr>
                                 <td><label><input type="checkbox" name="item_id[]" <?php echo $item->item_id?'checked':''?> value="<?php echo $item->id ?>">     <?php echo $item->name ?></label></td>
                                 <td><textarea type="text" class="form-control" name="description[<?php echo $item->id?>]"><?php echo $item->description?></textarea></td>
-                                <td><input type="number" min="0" step="any" class="form-control" name="quantity[<?php echo $item->id?>]" value="<?php echo $item->quantity?>"></td>
                             </tr>
                         <?php }
                         foreach ($itemsList as $i => $item) {
@@ -64,7 +58,6 @@ $rfp = DB::getInstance()->querySample("SELECT r.* FROM rfp r WHERE r.id='$id'")[
                                 <tr>
                                     <td><label><input type="checkbox" name="item_id[]" value="<?php echo $item->id ?>">     <?php echo $item->name ?></label></td>
                                     <td><textarea type="text" class="form-control" name="description[<?php echo $item->id?>]"></textarea></td>
-                                    <td><input type="number" min="0" step="any" class="form-control" name="quantity[<?php echo $item->id?>]"></td>
                                 </tr>
                             <?php } ?>
                     </tbody>

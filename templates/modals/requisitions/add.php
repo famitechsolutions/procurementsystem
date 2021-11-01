@@ -1,9 +1,9 @@
 <?php
 $departmentsList = DB::getInstance()->querySample("SELECT * FROM department WHERE status=1 ORDER BY name");
-$itemsList = DB::getInstance()->querySample("SELECT * FROM item WHERE status=1 ORDER BY name");
+$itemsList = DB::getInstance()->querySample("SELECT * FROM item WHERE status=1 AND unit_price IS NOT NULL ORDER BY name");
 $itemsString='<option value="">Choose</option>';
 foreach($itemsList AS $item){
-    $itemsString.='<option value="'.$item->id.'">'.$item->name.'</option>';;
+    $itemsString.='<option value="'.$item->id.'" data-price="'.$item->unit_price.'" data-measure="'.$item->unit_measure.'">'.$item->name.': ('.$item->unit_measure.')</option>';
 }
 ?>
 
@@ -31,7 +31,7 @@ foreach($itemsList AS $item){
             </div>
             <div class="col">
                 <label>Requisition No. </label>
-                <input class="form-control" id="requisition_number" name="requisition_number">
+                <input class="form-control" id="requisition_number" value="<?php echo date('YmdHis')?>" name="requisition_number">
             </div>
         </div>
 
@@ -39,9 +39,9 @@ foreach($itemsList AS $item){
             <thead>
                 <tr>
                     <th>Goods Description</th>
-                    <th>Quantity</th>
                     <th>Unit of Measure</th>
                     <th>Unit Price</th>
+                    <th>Quantity</th>
                     <th>Total Price</th>
                     <th><button type="button" class="btn btn-primary btn-xs" onclick="add_element('requisition');"><i class="fa fa-plus-circle"></i></button></th>
                 </tr>
@@ -49,13 +49,13 @@ foreach($itemsList AS $item){
             <tbody id="requisition_div">
                 <tr>
                     <td>
-                        <select class="form-control" name="item[]" required>
+                        <select id="item_1" class="form-control" name="item[]" onchange="calculateTotal(1);" required>
                             <?php echo $itemsString?>
                         </select>
                     </td>
+                    <td><input id="measure_1" class="form-control" readonly></td>
+                    <td><input id="unit_price_1" readonly class="form-control"></td>
                     <td><input type="number" id="quantity_1" oninput="calculateTotal(1);" min="0" step="0.01" class="form-control" name="quantity[]" required></td>
-                    <td><input type="text" id="standard_1" class="form-control" name="unit_measure[]"></td>
-                    <td><input type="number" id="unit_price_1" oninput="calculateTotal(1);" min="0" class="form-control" name="unit_cost[]"></td>
                     <td><input type="text" id="total_cost_1" class="form-control" name="total_cost[]" readonly></td>
                     <td></td>
                 </tr>

@@ -33,7 +33,6 @@
                                                     <tr>
                                                         <th>Open Date</th>
                                                         <th>Close Date</th>
-                                                        <th>Expected Delivery Date</th>
                                                         <th>Expected Attachments</th>
                                                         <th>Status</th>
                                                     </tr>
@@ -43,7 +42,6 @@
                                                         <tr style="position: relative;">
                                                             <td><a class="stretched-link-" href="?page=<?php echo $crypt->encode('rfp').'&id='.$crypt->encode($rfp->id)?>"><?php echo $rfp->open_date?></a></td>
                                                             <td><?php echo $rfp->close_date?></td>
-                                                            <td><?php echo $rfp->expected_delivery_date?></td>
                                                             <td><?php echo $rfp->expected_attachments?></td>
                                                             <td><?php echo $rfp->rfp_status?></td>
                                                         </tr>

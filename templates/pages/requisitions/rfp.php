@@ -23,16 +23,16 @@
                                 $id = $crypt->decode($_GET['id']);
                                 $rfp = DB::getInstance()->querySample("SELECT *, (CASE WHEN rfp_status='Open' AND close_date<='$date_today' THEN 'Closed' ELSE r.rfp_status END)rfp_status, (CASE WHEN rfp_status='Closed' OR close_date<='$date_today' THEN 1 ELSE 0 END) is_closed FROM rfp r WHERE r.id='$id' AND status=1")[0];
                                 if ($rfp) {
-                                    $filterCondition=$userInfo->category=='Supplier'?" AND ca.user_id='$user_id'":"";
+                                    $filterCondition = $userInfo->category == 'Supplier' ? " AND ca.user_id='$user_id'" : "";
                                     $proposalsList = DB::getInstance()->querySample("SELECT u.*,CONCAT(u.fname,' ',u.lname) full_name,ca.* FROM contract_application ca, user u WHERE ca.user_id=u.id AND ca.rfp_id='$id' $filterCondition AND ca.status=1 ORDER BY ca.application_status");
                                     $rfpFiles = DB::getInstance()->querySample("SELECT * FROM attachment WHERE rfp_id='$id' AND status=1");
                                     $itemsList = DB::getInstance()->querySample("SELECT * FROM rfp_item ri,item i WHERE i.id=ri.item_id AND ri.rfp_id='$id' AND ri.status=1");
                                 ?>
                                     <div class="card-title">
                                         Request for proposal #<?php echo $id ?> <small class="ml-4 btn btn-outline-info btn-xs">Status: <?php echo $rfp->rfp_status ?></small>
-                                        <?php if(!$proposalsList&&$rfp->rfp_status=='Open'&&$userInfo->category=='Supplier'){?>
-                                            <a class="btn btn-success btn-xs" href="?page=<?php echo $crypt->encode('create_bid')."&rfp=".$crypt->encode($rfp->id)?>">Apply now</a>
-                                            <?php }?>
+                                        <?php if (!$proposalsList && $rfp->rfp_status == 'Open' && $userInfo->category == 'Supplier') { ?>
+                                            <a class="btn btn-success btn-xs" href="?page=<?php echo $crypt->encode('create_bid') . "&rfp=" . $crypt->encode($rfp->id) ?>">Apply now</a>
+                                        <?php } ?>
                                     </div>
                                     <div class="card-body">
                                         <div class="nav-tabs-custom">
@@ -52,7 +52,7 @@
                                                     <?php if (in_array("openRFP", $user_permissions) && $rfp->rfp_status == 'Pending') { ?>
                                                         <a data-toggle='tooltip' title='<?php _e('Open '); ?>' class="btn btn-primary btn-xs " onClick='showModal("index.php?modal=proposals/open_rfp&reroute=<?php echo $crypt->encode('page=' . $_GET['page'] . '&id=' . $_GET['id'] . '&tab=summary-tab') . '&id=' . $rfp->id; ?>&tab=summary-tab");return false'>Make Open</a>
                                                     <?php } ?>
-                                                    <?php if (in_array("editRFP", $user_permissions) && ($rfp->rfp_status == 'Pending'||$rfp->rfp_status=='Closed')&&empty($proposalsList)) { ?>
+                                                    <?php if (in_array("editRFP", $user_permissions) && ($rfp->rfp_status == 'Pending' || $rfp->rfp_status == 'Closed') && empty($proposalsList)) { ?>
                                                         <a data-toggle='tooltip' title='<?php _e('Edit '); ?>' class="btn btn-default btn-xs " href="#" onClick='showModal("index.php?modal=proposals/edit_rfp&reroute=<?php echo $crypt->encode('page=' . $_GET['page'] . '&id=' . $_GET['id'] . '&tab=summary-tab') . '&id=' . $rfp->id; ?>&tab=summary-tab", "large");return false'>Edit</a>
                                                     <?php } ?>
                                                     <?php if (in_array("editRFP", $user_permissions) && ($rfp->rfp_status == 'Pending')) { ?>
@@ -64,7 +64,6 @@
                                             <div class="tab-content p-2">
                                                 <div class="tab-pane  <?php echo $summary_tab_active ?>" id="summary-tab">
                                                     <h3>Valid from <?php echo $rfp->open_date ?> to <?php echo $rfp->close_date ?></h3>
-                                                    <h5>Expected delivery date: <?php echo $rfp->expected_delivery_date ?></h5>
                                                     <h3>Purpose Statement</h3>
                                                     <?php echo $rfp->purpose_statement ?>
                                                     <h3>Expected Attachments</h3>
@@ -86,7 +85,6 @@
                                                             <tr>
                                                                 <th>Item</th>
                                                                 <th>Description</th>
-                                                                <th>Quantity</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
@@ -96,7 +94,6 @@
                                                                 <tr>
                                                                     <td><?php echo $item->name ?></td>
                                                                     <td><?php echo $item->description ?></td>
-                                                                    <td><?php echo $item->quantity ?></td>
                                                                 </tr>
                                                             <?php } ?>
                                                         </tbody>
@@ -117,7 +114,7 @@
                                                             <div class="card" role="tab" id="proposal-item-<?php echo $proposal->id ?>">
                                                                 <div class="card-header">
                                                                     <h6 class="mb-0">
-                                                                        <a class="accordion-toggle accordion-toggle-styled <?php echo $expanded ? '' : 'collapsed' ?>" data-toggle="collapse" aria-expanded="<?php echo $expanded ? 'true' : 'false' ?>" data-parent="#accordion3" href="#collapse-<?php echo $proposal->id ?>">Applicant: <?php echo $proposal->full_name.', '.$proposal->email; ?> <span class="btn btn-xs <?php echo $statusClass ?>">Status: <?php echo $proposal->application_status ?></span></a>
+                                                                        <a class="accordion-toggle accordion-toggle-styled <?php echo $expanded ? '' : 'collapsed' ?>" data-toggle="collapse" aria-expanded="<?php echo $expanded ? 'true' : 'false' ?>" data-parent="#accordion3" href="#collapse-<?php echo $proposal->id ?>">Applicant: <?php echo $proposal->full_name . ', ' . $proposal->email; ?> <span class="btn btn-xs <?php echo $statusClass ?>">Status: <?php echo $proposal->application_status ?></span></a>
                                                                     </h6>
                                                                 </div>
                                                                 <div id="collapse-<?php echo $proposal->id ?>" class=" <?php echo $expanded ? 'show' : 'collapse' ?>" aria-labelledby="proposal-item-<?php echo $proposal->id ?>">
@@ -171,7 +168,36 @@
                                                                                     if (empty($files)) {
                                                                                         echo '<div class="alert alert-danger">No attachment submitted</div>';
                                                                                     }
-
+                                                                                    if ($proposal->items) {
+                                                                                        $items = json_decode($proposal->items);
+                                                                                    ?>
+                                                                                        <h4>Item Prices</h4>
+                                                                                        <table class="table table-bordered">
+                                                                                            <thead>
+                                                                                                <tr>
+                                                                                                    <th>Item</th>
+                                                                                                    <th>Unit Measure</th>
+                                                                                                    <th>Price</th>
+                                                                                                </tr>
+                                                                                            </thead>
+                                                                                            <tbody>
+                                                                                                <?php
+                                                                                                for ($i = 0; $i < count($items->id); $i++) {
+                                                                                                    $item = DB::getInstance()->getRow("item", $items->id[$i], '*', 'id'); ?>
+                                                                                                    <tr>
+                                                                                                        <td><?php echo $item->name ?></td>
+                                                                                                        <td><?php echo $item->unit_measure ?></td>
+                                                                                                        <td><?php echo $items->price[$i] ?></td>
+                                                                                                    </tr>
+                                                                                                <?php
+                                                                                                }
+                                                                                                ?>
+                                                                                            </tbody>
+                                                                                        </table>
+                                                                                    <?php
+                                                                                    }else{
+                                                                                        echo '<div class="alert alert-danger">No items selected</div>';
+                                                                                    }
                                                                                     foreach ($response as $q => $a) { ?>
                                                                                         <label class="mt-2 mb-0"><?php echo $q ?></label>
                                                                                         <div class="bg-gray p-1"><?php echo $a ?></div>

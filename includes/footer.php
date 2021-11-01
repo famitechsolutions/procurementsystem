@@ -66,10 +66,10 @@
 <script src="assets/lib/data-table/extra/vfs_fonts.js" type="text/javascript"></script>
 
 <?php
-$itemsList = DB::getInstance()->querySample("SELECT * FROM item WHERE status=1 ORDER BY name");
+$itemsList = DB::getInstance()->querySample("SELECT * FROM item WHERE status=1 AND unit_price IS NOT NULL ORDER BY name");
 $itemsString = '<option value="">Choose</option>';
 foreach ($itemsList as $item) {
-    $itemsString .= '<option value="' . $item->id . '">' . $item->name . '</option>';;
+    $itemsString .= '<option value="' . $item->id . '" data-price="'.$item->unit_price.'" data-measure="'.$item->unit_measure.'">'.$item->name.': ('.$item->unit_measure.')</option>';
 }
 ?>
 <script>
@@ -104,6 +104,7 @@ foreach ($itemsList as $item) {
 
 
     }
+
     function calculateLPOAsmount(LPOitems, set_to) {
         var items = document.querySelectorAll(LPOitems);
         var totalAmount = 0;
@@ -119,10 +120,10 @@ foreach ($itemsList as $item) {
         var data = "";
         if (type === 'requisition' || type === 'claim') {
             data = '<tr id="' + row_ids + '">\n\
-                                                    <td><select class="form-control" id="asset_' + row_ids + '"  name="item[]"><?php echo $itemsString ?></select></td>\n\
+                                                    <td><select class="form-control" id="item_' + row_ids + '" onChange="calculateTotal(' + row_ids + ');" name="item[]"><?php echo $itemsString ?></select></td>\n\
+                                                    <td><input type="text" id="measure_' + row_ids + '" class="form-control" readonly></td>\n\
+                                                    <td><input class="form-control" id="unit_price_' + row_ids + '" readonly></td>\n\
                                                     <td><input type="number" id="quantity_' + row_ids + '" oninput="calculateTotal(' + row_ids + ');" min="0" step="0.1" class="form-control" name="quantity[]" required></td>\n\
-                                                    <td><input type="text" id="standard_' + row_ids + '" class="form-control" name="unit_measure[]"></td>\n\
-                                                    <td><input type="number" min="0" id="unit_price_' + row_ids + '" oninput="calculateTotal(' + row_ids + ');" class="form-control" name="unit_cost[]" required></td>\n\
                                                     <td><input type="text" id="total_cost_' + row_ids + '" class="form-control" name="total_cost[]" readonly></td>\n\
                                                     <td><button type="button" value="' + row_ids + '" class="btn btn-danger btn-xs pull-right" onclick="delete_item(this.value);calculateOverallTotal();"><i class ="fa fa-times"></i></button>\n\
                                                     </td></tr>';
@@ -135,14 +136,21 @@ foreach ($itemsList as $item) {
     }
 
     function calculateTotal(tr_id) {
+        var itemEl = document.getElementById('item_' + tr_id),
+        option=itemEl.options[itemEl.selectedIndex],
+        unit_cost=option.dataset.price,
+        unit_measure=option.dataset.measure;
+        $("#measure_"+tr_id).val(unit_measure)
+        $("#unit_price_"+tr_id).val(unit_cost)
+
         var quantity = document.getElementById('quantity_' + tr_id).value;
-        var unit_cost = document.getElementById('unit_price_' + tr_id).value;
         quantity = (quantity) ? parseFloat(quantity) : 0;
         unit_cost = (unit_cost) ? parseFloat(unit_cost) : 0;
         var total = quantity * unit_cost;
         total = +(Math.round(total + "e+2") + "e-2");
         document.getElementById('total_cost_' + tr_id).value = total;
         calculateOverallTotal();
+
     }
 
     function calculateOverallTotal() {

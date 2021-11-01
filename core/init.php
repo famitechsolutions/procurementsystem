@@ -52,7 +52,7 @@ define('TIME_ZONE',getConfigValue("timezone"));
 define("CURRENCY_SYMBOL",getConfigValue("currency_symbol"));
 define("CURRENCY_SYMBOL_LOCATION", getConfigValue("currency_symbol_location"));
 
-$roles=array("Admin","Supplier");
+$roles=array("Admin","Supplier","Manager");
 
 
 
@@ -69,7 +69,8 @@ $countries_list = array("Afghanistan", "Albania", "Algeria", "American Samoa", "
 
 $permissionList=array(
 	'Admin'=>array("manageSettings","viewLogs","addUser","viewUsers","editUser","deleteUser","viewRequisition","addRequisition","editRequisition","deleteRequisition","approveRequisition","viewLPOs","addLPO","editLPO","deleteLPO","addRFP","openRFP","editRFP","deleteRFP","approveProposal"),
-	'Supplier'=>array()
+	'Supplier'=>array(),
+	'Manager'=>array("viewRequisition","addRequisition","editRequisition","deleteRequisition","approveRequisition","viewLPOs","addLPO","editLPO","deleteLPO","addRFP","openRFP","editRFP","deleteRFP","approveProposal")
 );
 
 

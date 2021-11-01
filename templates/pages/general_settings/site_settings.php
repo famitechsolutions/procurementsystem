@@ -159,6 +159,8 @@
                                                                     <div class="form-group">
                                                                         <label>Name</label>
                                                                         <input type="text" class="form-control" name="name" required>
+                                                                        <label>Unit Measure</label>
+                                                                        <input type="text" class="form-control" name="unit_measure">
                                                                     </div>
 
                                                                 </div>
@@ -175,18 +177,56 @@
                                                     <thead>
                                                         <tr>
                                                             <th>Name</th>
+                                                            <th>Unit Measure</th>
+                                                            <th>Unit Price</th>
+                                                            <th>Supplier <small>[From contract]</small></th>
                                                             <th>Action</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
                                                         <?php
-                                                        $ditemsQuery = "SELECT * FROM item ORDER BY name";
+                                                        $ditemsQuery = "SELECT i.*,CONCAT(u.fname,' ',u.lname) supplier FROM item i LEFT JOIN user u ON (i.supplier=u.id AND u.status=1) ORDER BY i.name";
                                                         $itemsList = DB::getInstance()->querySample($ditemsQuery);
                                                         foreach ($itemsList as $item) {
                                                         ?>
                                                             <tr>
                                                                 <td><?php echo $item->name ?></td>
-                                                                <td></td>
+                                                                <td><?php echo $item->unit_measure ?></td>
+                                                                <td><?php echo $item->unit_price ?></td>
+                                                                <td><?php echo $item->supplier ?></td>
+                                                                <td>
+                                                                    <a href="#edit-item-modal<?php echo $item->id ?>" data-toggle="modal" class="btn btn-primary btn-xs"><?php _e('edit'); ?></a>
+                                                                    <div class="modal fade" id="edit-item-modal<?php echo $item->id ?>" tabindex="-1" role="dialog" aria-labelledby="ultraModal-Label" aria-hidden="true">
+                                                                        <div class="modal-dialog modal-sm animated fadeInDown">
+                                                                            <div class="modal-content animated">
+                                                                                <form action="" method="POST">
+                                                                                    <div class="modal-header">
+                                                                                        <h4 class="modal-title">Edit item</h4>
+                                                                                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span>
+                                                                                            <span class="sr-only">Close</span>
+                                                                                        </button>
+                                                                                    </div>
+                                                                                    <div class="modal-body">
+                                                                                        <div class="form-group">
+                                                                                            <label>Name</label>
+                                                                                            <input type="text" class="form-control" name="name" value="<?php echo $item->name?>" required>
+                                                                                            <label>Unit Measure</label>
+                                                                                            <input type="text" class="form-control" name="unit_measure" value="<?php echo $item->unit_measure?>">
+                                                                                            <?php if($item->supplier!=""){?><br/><label><input type="checkbox" name="remove_supplier" value="1"/> Remove Supplier</label><?php }?>
+                                                                                        </div>
+
+                                                                                    </div>
+                                                                                    <div class="modal-footer">
+                                                                                        <input type="hidden" name="id" value="<?php echo $item->id?>"/>
+                                                                                        <input type="hidden" name="reroute" value="<?php echo $crypt->encode('page=' . $_GET['page'] . '&tab=items-tab'); ?>">
+                                                                                        <button type="button" class="btn btn-warning" data-dismiss="modal">Close</button>
+                                                                                        <button type="submit" name="action" value="editItem" class="btn btn-primary">Submit</button>
+                                                                                    </div>
+                                                                                </form>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </td>
                                                             </tr>
                                                         <?php }
                                                         ?>
